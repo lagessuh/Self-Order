@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107557154609",
+    "project_id": "self-order-ca1c1",
+    "storage_bucket": "self-order-ca1c1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107557154609:android:2aaf921a2e6e227d3e8a10",
+        "android_client_info": {
+          "package_name": "com.example.self_order"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8wUPZXnCT8iOeNVX-jPXorvOQM7Bwn5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
