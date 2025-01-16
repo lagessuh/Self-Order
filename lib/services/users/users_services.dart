@@ -46,21 +46,75 @@ class UsersServices extends ChangeNotifier {
     }
   }
 
-  //Método para autenticação de usuário
-  Future<void> signIn(
-      {String? email,
+  Future<bool> signUp2(
+      {UserModel? userModel,
+      String? userName,
+      String? email,
       String? password,
-      Function? onSucess,
-      Function? onFail}) async {
+      Function? onFail,
+      Function? onSuccess}) async {
     try {
-      User? user = (await _auth.signInWithEmailAndPassword(
-        email: email!,
+      User? user = (await _auth.createUserWithEmailAndPassword(
+        email: userModel!.email!,
         password: password!,
       ))
           .user;
+      userModel = userModel;
+      userModel.id = user!.uid;
+      saveData();
+
+      _loadingCurrentUser(user: user);
+      onSuccess!();
+      return Future.value(true);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        onFail!('Este email já está cadastrado');
+      } else if (e.code == 'invalid-email') {
+        onFail!('O email informado está com formato inválido');
+      } else if (e.code == 'weak-password') {
+        onFail!('A senha é muito fraca');
+      } else if (e.code == 'user-disabled') {
+        onFail!('Este usuário foi desativado');
+      } else if (e.code == 'operation-not-allowed') {
+        onFail!('A operação não é permitida');
+      } else {
+        onFail!('Erro ao criar conta: ${e.message}');
+      }
+      return Future.value(false);
+    }
+  }
+
+  Future<bool> saveData() async {
+    try {
+      final _docRef = FirebaseFirestore.instance.collection('users').doc(
+          userModel!
+              .id); // Usando o id do userLocal para referenciar o documento
+
+      await _docRef.set(userModel!.toJson()); // Salva os dados
+
+      return true; // Retorna true se os dados forem salvos com sucesso
+    } catch (e) {
+      debugPrint('Erro ao salvar dados: $e');
+      return false; // Retorna false se houver erro
+    }
+  }
+
+  // Método para autenticação de usuário
+  Future<void> signIn({
+    required String email,
+    required String password,
+    required Function onSuccess,
+    required Function(String) onFail,
+  }) async {
+    try {
+      User? user = (await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      ))
+          .user;
+
       await _loadingCurrentUser(user: user);
-      onSucess!();
-      // return Future.value(true);
+      onSuccess();
     } on FirebaseAuthException catch (e) {
       String code;
       if (e.code == 'invalid-email') {
@@ -68,14 +122,70 @@ class UsersServices extends ChangeNotifier {
       } else if (e.code == 'wrong-password') {
         code = 'A senha informada está errada';
       } else if (e.code == 'user-disabled') {
-        code = 'Já existe cadastro com este email!!';
+        code = 'Usuário desativado. Por favor, contate o suporte.';
       } else {
-        code = "Algum erro aconteceu na Plataforma do Firebase";
+        code = 'Algum erro aconteceu na Plataforma do Firebase';
       }
-      onFail!(code);
-      // return Future.value(false);
+      onFail(code);
     }
   }
+
+  Future<void> _loadingCurrentUser({User? user}) async {
+    User? currentUser = user ?? _auth.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot<Map<String, dynamic>> docUser =
+          await _firestore.collection('users').doc(currentUser.uid).get();
+
+      if (docUser.data() != null) {
+        userModel = UserModel.fromMap(docUser.data()!);
+      } else {
+        // Lidar com o caso onde os dados do usuário não estão presentes
+        userModel = UserModel(
+          email: currentUser.email ?? 'anonimo@anonimo.com',
+          id: currentUser.uid,
+          userName: 'anônimo',
+        );
+      }
+    } else {
+      userModel = UserModel(
+        email: 'anonimo@anonimo.com',
+        id: null,
+        userName: 'anônimo',
+      );
+    }
+    notifyListeners();
+  }
+
+  // Future<void> signIn(
+  //     {String? email,
+  //     String? password,
+  //     Function? onSucess,
+  //     Function? onFail,
+  //     required Null Function() onSuccess}) async {
+  //   try {
+  //     User? user = (await _auth.signInWithEmailAndPassword(
+  //       email: email!,
+  //       password: password!,
+  //     ))
+  //         .user;
+  //     await _loadingCurrentUser(user: user);
+  //     onSucess!();
+  //     // return Future.value(true);
+  //   } on FirebaseAuthException catch (e) {
+  //     String code;
+  //     if (e.code == 'invalid-email') {
+  //       code = 'Email informado é inválido';
+  //     } else if (e.code == 'wrong-password') {
+  //       code = 'A senha informada está errada';
+  //     } else if (e.code == 'user-disabled') {
+  //       code = 'Já existe cadastro com este email!!';
+  //     } else {
+  //       code = "Algum erro aconteceu na Plataforma do Firebase";
+  //     }
+  //     onFail!(code);
+  //     // return Future.value(false);
+  //   }
+  // }
 
   saveUserDetails() async {
     await _firestoreRef.set(userModel!.toJson());
@@ -86,21 +196,21 @@ class UsersServices extends ChangeNotifier {
     // _uploadImage(imageFile, plat);
   }
 
-  //método para obter as credenciais do usuário autenticado
-  _loadingCurrentUser({User? user}) async {
-    User? currentUser = user ?? _auth.currentUser;
-    if (currentUser != null) {
-      DocumentSnapshot docUser =
-          await _firestore.collection('users').doc(currentUser.uid).get();
-      userModel = UserModel.fromJson(docUser);
-      notifyListeners();
-    } else {
-      userModel = UserModel(
-          email: 'anonimo@anonimo.com',
-          id: currentUser?.uid,
-          userName: 'anônimo');
-    }
-  }
+  // //método para obter as credenciais do usuário autenticado
+  // _loadingCurrentUser({User? user}) async {
+  //   User? currentUser = user ?? _auth.currentUser;
+  //   if (currentUser != null) {
+  //     DocumentSnapshot docUser =
+  //         await _firestore.collection('users').doc(currentUser.uid).get();
+  //     userModel = UserModel.fromJson(docUser);
+  //     notifyListeners();
+  //   } else {
+  //     userModel = UserModel(
+  //         email: 'anonimo@anonimo.com',
+  //         id: currentUser?.uid,
+  //         userName: 'anônimo');
+  //   }
+  // }
 
   // _uploadImage(dynamic imageFile, bool plat) async {
   //   //chave para persistir a imagem no firebasestorage

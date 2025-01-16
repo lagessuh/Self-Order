@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:self_order/pages/autenticacao/login_page.dart';
-import 'package:self_order/pages/home/main_paige.dart';
+import 'package:self_order/pages/autenticacao/login_page2.dart';
+import 'package:self_order/pages/home/main_page.dart';
 import 'package:self_order/services/users/users_services.dart';
 
 void main() async {
@@ -46,14 +47,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: LoginPage(),
+      home: LoginPage2(),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/mainpage':
             return MaterialPageRoute(builder: (context) => const MainPage());
           default:
             return MaterialPageRoute(
-                builder: (context) => LoginPage()); // Ou alguma página de erro
+              builder: (context) => Scaffold(
+                appBar: AppBar(title: const Text('Erro')),
+                body: const Center(child: Text('Página não encontrada')),
+              ),
+            );
         }
       },
     );
