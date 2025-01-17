@@ -1,0 +1,1 @@
+ C:\\Users\\suell\\Documentos\\PDM\\self_order\\.dart_tool\\flutter_build\\525c9155c1116ed12d52312bd29eabfa\\native_assets.yaml: 
