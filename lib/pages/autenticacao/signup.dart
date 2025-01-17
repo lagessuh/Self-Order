@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:self_order/commons/custom_textformfield.dart';
 import 'package:self_order/models/users/users.dart';
+import 'package:self_order/pages/autenticacao/login_page.dart';
 import 'package:self_order/services/users/users_services.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -232,19 +233,29 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(
                       height: 8.0,
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text('Já tem uma conta?'),
-                        SizedBox(
+                        const Text('Já tem uma conta?'),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          'Login',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                              fontSize: 16),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                                fontSize: 16),
+                          ),
                         ),
                       ],
                     ),

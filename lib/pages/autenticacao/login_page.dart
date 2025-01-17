@@ -12,12 +12,15 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Padding(
         padding: Responsive.isDesktop(context)
-            ? const EdgeInsets.only(left: 80.0, right: 80, top: 50)
+            ? const EdgeInsets.only(left: 80.0, right: 80, top: 50, bottom: 50)
             : Responsive.isTablet(context)
-                ? const EdgeInsets.only(left: 70.0, right: 70, top: 30)
-                : const EdgeInsets.only(left: 40.0, right: 40, top: 20),
+                ? const EdgeInsets.only(
+                    left: 70.0, right: 70, top: 30, bottom: 30)
+                : const EdgeInsets.only(
+                    left: 40.0, right: 40, top: 20, bottom: 20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +49,7 @@ class LoginPage extends StatelessWidget {
                               ? 350
                               : 200,
                       width: Responsive.isDesktop(context)
-                          ? const Size.fromHeight(50).height
+                          ? const Size.fromHeight(500).height
                           : Responsive.isTablet(context)
                               ? 475
                               : 400,
@@ -63,7 +66,7 @@ class LoginPage extends StatelessWidget {
                       : Responsive.isTablet(context)
                           ? 27
                           : 22,
-                  color: const Color.fromARGB(248, 21, 118, 6),
+                  color: Colors.black,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Roboto',
                 ),
@@ -76,7 +79,7 @@ class LoginPage extends StatelessWidget {
                       : Responsive.isTablet(context)
                           ? 21
                           : 18,
-                  color: const Color.fromARGB(248, 21, 118, 6),
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(
@@ -85,8 +88,11 @@ class LoginPage extends StatelessWidget {
               TextFormField(
                 controller: _email,
                 decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.person),
-                    label: Text("E-mail"),
+                    prefixIcon: Icon(Icons.person, color: Colors.black),
+                    label: Text(
+                      "E-mail",
+                      style: TextStyle(color: Colors.black),
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(width: 1.3),
                     ),
@@ -100,7 +106,7 @@ class LoginPage extends StatelessWidget {
                 obscureText: true,
                 controller: _password,
                 decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.fingerprint),
+                    prefixIcon: Icon(Icons.fingerprint, color: Colors.black),
                     label: Text("Senha"),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(width: 1.3),
@@ -114,7 +120,7 @@ class LoginPage extends StatelessWidget {
                 child: const Text(
                   'Esqueceu a senha?',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -129,23 +135,23 @@ class LoginPage extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () async {
                           usersServices.signIn(
-                              email: _email.text.trim(),
-                              password: _password.text.trim(),
-                              onSucess: () {
-                                Navigator.pushReplacementNamed(
-                                    context, '/mainpage');
-                              },
-                              onFail: (e) {
-                                var snack = SnackBar(
-                                  content: Text(e),
-                                  backgroundColor: Colors.red,
-                                  elevation: 20,
-                                  behavior: SnackBarBehavior.floating,
-                                  margin: const EdgeInsets.all(20),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snack);
-                              });
+                            email: _email.text.trim(),
+                            password: _password.text.trim(),
+                            onFail: (e) {
+                              var snack = SnackBar(
+                                content: Text(e),
+                                backgroundColor: Colors.red,
+                                elevation: 20,
+                                behavior: SnackBarBehavior.floating,
+                                margin: const EdgeInsets.all(20),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(snack);
+                            },
+                            onSuccess: () {
+                              Navigator.pushReplacementNamed(
+                                  context, '/mainpage');
+                            },
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                             elevation: 1.5,
@@ -154,6 +160,7 @@ class LoginPage extends StatelessWidget {
                         child: const Text(
                           'Entrar',
                           style: TextStyle(
+                            color: Colors.black,
                             fontWeight: FontWeight.w800,
                             fontSize: 20,
                           ),
@@ -165,7 +172,10 @@ class LoginPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Text('Ainda não tem conta?'),
+                          const Text(
+                            'Ainda não tem conta?',
+                            style: TextStyle(color: Colors.black),
+                          ),
                           const SizedBox(
                             width: 10,
                           ),
@@ -182,7 +192,7 @@ class LoginPage extends StatelessWidget {
                               'Registre-se',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
+                                  color: Colors.black,
                                   fontSize: 16),
                             ),
                           ),
