@@ -42,8 +42,7 @@ class UserProfilePage extends StatelessWidget {
                           Text(
                               'Nome: ${usersServices.userModel!.userName!.toUpperCase()}'),
                           Text('Email: ${usersServices.userModel!.email}'),
-                          Text(
-                              'Telefone: ${usersServices.userModel!.telefone}'),
+                          //Text('Telefone: ${usersServices.userModel!.telefone}'),
                         ],
                       )
                     ]),

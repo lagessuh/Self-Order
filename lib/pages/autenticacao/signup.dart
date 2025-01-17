@@ -158,8 +158,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         users.email = _email.text;
                         users.userName = _userName.text;
                         users.password = _password.text;
-                        users.aniversario = _aniversario.text;
-                        users.telefone = _telefone.text;
+                        // users.aniversario = _aniversario.text;
+                        // users.telefone = _telefone.text;
 
                         if (await usersServices.signUp(users, kIsWeb)) {
                           if (context.mounted) Navigator.of(context).pop();

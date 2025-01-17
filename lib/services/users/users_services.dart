@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:self_order/models/users/users.dart';
@@ -46,43 +47,117 @@ class UsersServices extends ChangeNotifier {
     }
   }
 
-  Future<bool> signUp2(
-      {UserModel? userModel,
-      String? userName,
-      String? email,
-      String? password,
-      Function? onFail,
-      Function? onSuccess}) async {
+  Future<bool> signUp2({
+    required UserModel userModel,
+    required String password,
+    required Function onFail,
+    required Function onSuccess,
+  }) async {
     try {
-      User? user = (await _auth.createUserWithEmailAndPassword(
-        email: userModel!.email!,
-        password: password!,
-      ))
-          .user;
-      userModel = userModel;
-      userModel.id = user!.uid;
-      saveData();
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: userModel.email!,
+        password: password,
+      );
 
-      _loadingCurrentUser(user: user);
-      onSuccess!();
-      return Future.value(true);
+      User user = userCredential.user!;
+      userModel.id = user.uid;
+
+      // Salva os dados do usuário no Firestore usando o método toMap
+      await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
+
+      // Carrega o usuário atual para atualizar o userModel
+      await _loadingCurrentUser(user: user);
+
+      onSuccess();
+      return true;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        onFail!('Este email já está cadastrado');
-      } else if (e.code == 'invalid-email') {
-        onFail!('O email informado está com formato inválido');
-      } else if (e.code == 'weak-password') {
-        onFail!('A senha é muito fraca');
-      } else if (e.code == 'user-disabled') {
-        onFail!('Este usuário foi desativado');
-      } else if (e.code == 'operation-not-allowed') {
-        onFail!('A operação não é permitida');
-      } else {
-        onFail!('Erro ao criar conta: ${e.message}');
+      switch (e.code) {
+        case 'email-already-in-use':
+          if (kDebugMode) {
+            print('Erro: Este email já está cadastrado');
+          }
+          onFail('Este email já está cadastrado');
+          break;
+        case 'invalid-email':
+          if (kDebugMode) {
+            print('Erro: O email informado está com formato inválido');
+          }
+          onFail('O email informado está com formato inválido');
+          break;
+        case 'weak-password':
+          if (kDebugMode) {
+            print('Erro: A senha precisa ter no mínimo 6 caracteres');
+          }
+          onFail('A senha precisa ter no mínimo 6 caracteres');
+          break;
+        case 'user-disabled':
+          if (kDebugMode) {
+            print('Erro: Este usuário foi desativado');
+          }
+          onFail('Este usuário foi desativado');
+          break;
+        case 'operation-not-allowed':
+          if (kDebugMode) {
+            print('Erro: A operação não é permitida');
+          }
+          onFail('A operação não é permitida');
+          break;
+        default:
+          if (kDebugMode) {
+            print('Erro ao criar conta: ${e.message}');
+          }
+          onFail('Erro ao criar conta: ${e.message}');
       }
-      return Future.value(false);
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro inesperado ao criar conta: $e');
+      }
+      onFail('Erro inesperado ao criar conta: $e');
+      return false;
     }
   }
+
+  // Future<bool> signUp2(
+  //     {UserModel? userModel,
+  //     String? userName,
+  //     String? email,
+  //     String? password,
+  //     Function? onFail,
+  //     Function? onSuccess}) async {
+  //   try {
+  //     User? user = (await _auth.createUserWithEmailAndPassword(
+  //       email: userModel!.email!,
+  //       password: password!,
+  //     ))
+  //         .user;
+
+  //     userModel.id = user!.uid;
+  //     userModel = userModel;
+
+  //     saveData();
+
+  //     _loadingCurrentUser(user: user);
+  //     onSuccess!();
+  //     return Future.value(true);
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'email-already-in-use') {
+  //       onFail!('Este email já está cadastrado');
+  //     } else if (e.code == 'invalid-email') {
+  //       onFail!('O email informado está com formato inválido');
+  //     } else if (e.code == 'weak-password') {
+  //       onFail!('A senha precisa ter no mínimo 6 caracteres');
+  //     } else if (e.code == 'user-disabled') {
+  //       onFail!('Este usuário foi desativado');
+  //     } else if (e.code == 'operation-not-allowed') {
+  //       onFail!('A operação não é permitida');
+  //     } else {
+  //       onFail!('Erro ao criar conta: ${e.message}');
+  //     }
+  //     return Future.value(false);
+  //   }
+  // }
 
   Future<bool> saveData() async {
     try {
@@ -136,7 +211,8 @@ class UsersServices extends ChangeNotifier {
       DocumentSnapshot<Map<String, dynamic>> docUser =
           await _firestore.collection('users').doc(currentUser.uid).get();
 
-      if (docUser.data() != null) {
+      if (docUser.exists) {
+        // Carrega os dados do usuário do Firestore
         userModel = UserModel.fromMap(docUser.data()!);
       } else {
         // Lidar com o caso onde os dados do usuário não estão presentes
@@ -155,6 +231,32 @@ class UsersServices extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  // Future<void> _loadingCurrentUser({User? user}) async {
+  //   User? currentUser = user ?? _auth.currentUser;
+  //   if (currentUser != null) {
+  //     DocumentSnapshot<Map<String, dynamic>> docUser =
+  //         await _firestore.collection('users').doc(currentUser.uid).get();
+
+  //     if (docUser.data() != null) {
+  //       userModel = UserModel.fromMap(docUser.data()!);
+  //     } else {
+  //       // Lidar com o caso onde os dados do usuário não estão presentes
+  //       userModel = UserModel(
+  //         email: currentUser.email ?? 'anonimo@anonimo.com',
+  //         id: currentUser.uid,
+  //         userName: 'anônimo',
+  //       );
+  //     }
+  //   } else {
+  //     userModel = UserModel(
+  //       email: 'anonimo@anonimo.com',
+  //       id: null,
+  //       userName: 'anônimo',
+  //     );
+  //   }
+  //   notifyListeners();
+  // }
 
   // Future<void> signIn(
   //     {String? email,

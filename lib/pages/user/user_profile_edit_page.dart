@@ -56,7 +56,7 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
                   height: 10,
                 ),
                 TextFormField(
-                  initialValue: usersServices.userModel!.telefone,
+                  //initialValue: usersServices.userModel!.telefone,
                   decoration: InputDecoration(
                     label: const Text('Telefone'),
                     enabledBorder: const OutlineInputBorder(
@@ -75,7 +75,7 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
                   height: 10,
                 ),
                 TextFormField(
-                  initialValue: usersServices.userModel!.aniversario,
+                  // initialValue: usersServices.userModel!.aniversario,
                   decoration: InputDecoration(
                     label: const Text('Data de Nascimento'),
                     enabledBorder: const OutlineInputBorder(

@@ -9,16 +9,17 @@ class UserModel {
   String? userName;
   String? email;
   String? password;
-  String? telefone;
-  String? aniversario;
+  //String? telefone;
+  // String? aniversario;
+
   //UsersAccess? usersAccess;
   UserModel({
     this.id,
     this.userName,
     this.email,
     this.password,
-    this.telefone,
-    this.aniversario,
+    //this.telefone,
+    // this.aniversario,
   });
 
   UserModel copyWith({
@@ -26,16 +27,16 @@ class UserModel {
     String? userName,
     String? email,
     String? password,
-    String? telefone,
-    String? aniversario,
+    //String? telefone,
+    //String? aniversario,
   }) {
     return UserModel(
       id: id ?? this.id,
       userName: userName ?? this.userName,
       email: email ?? this.email,
       password: password ?? this.password,
-      telefone: telefone ?? this.telefone,
-      aniversario: aniversario ?? this.aniversario,
+      //  telefone: telefone ?? this.telefone,
+      //  aniversario: aniversario ?? this.aniversario,
     );
   }
 
@@ -45,8 +46,8 @@ class UserModel {
       'userName': userName,
       'email': email,
       'password': password,
-      'telefone': telefone,
-      'aniversario': aniversario,
+      //  'telefone': telefone,
+      //  'aniversario': aniversario,
     };
   }
 
@@ -56,9 +57,9 @@ class UserModel {
       userName: map['userName'] != null ? map['userName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       password: map['password'] != null ? map['password'] as String : null,
-      telefone: map['telefone'] != null ? map['telefone'] as String : null,
-      aniversario:
-          map['aniversario'] != null ? map['aniversario'] as String : null,
+      //  telefone: map['telefone'] != null ? map['telefone'] as String : null,
+      //  aniversario:
+      //      map['aniversario'] != null ? map['aniversario'] as String : null,
     );
   }
 
@@ -69,7 +70,8 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, userName: $userName, email: $email, password: $password, telefone: $telefone, aniversario: $aniversario)';
+    return 'UserModel(id: $id, userName: $userName, email: $email, password: $password)';
+    //telefone: $telefone, aniversario: $aniversario)';
   }
 
   @override
@@ -79,9 +81,9 @@ class UserModel {
     return other.id == id &&
         other.userName == userName &&
         other.email == email &&
-        other.password == password &&
-        other.telefone == telefone &&
-        other.aniversario == aniversario;
+        other.password == password;
+    //  other.telefone == telefone &&
+    //  other.aniversario == aniversario;
   }
 
   Map<String, dynamic> toJson() {
@@ -89,9 +91,9 @@ class UserModel {
       'id': id,
       'userName': userName,
       'email': email,
-      'phone': telefone,
+      //  'phone': telefone,
       'password': password,
-      'aniversario': aniversario,
+      //  'aniversario': aniversario,
     };
   }
 
@@ -99,17 +101,14 @@ class UserModel {
     id = doc.id;
     userName = doc.get('userName');
     email = doc.get('email');
-    telefone = doc.get('phone');
-    aniversario = doc.get('aniversario');
+    //  telefone = doc.get('phone');
+    //  aniversario = doc.get('aniversario');
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        userName.hashCode ^
-        email.hashCode ^
-        password.hashCode ^
-        telefone.hashCode ^
-        aniversario.hashCode;
+    return id.hashCode ^ userName.hashCode ^ email.hashCode ^ password.hashCode;
+    //  telefone.hashCode ^
+    //  aniversario.hashCode;
   }
 }

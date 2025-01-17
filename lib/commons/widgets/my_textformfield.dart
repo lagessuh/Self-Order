@@ -51,6 +51,8 @@ class MyTextFormField extends StatelessWidget {
       validator: (value) => validator!(value),
       onSaved: (value) => onSaved!(value),
       decoration: InputDecoration(
+          filled: true, // Habilita o preenchimento
+          fillColor: Colors.white,
           labelStyle: !enabled
               ? const TextStyle(color: Colors.red)
               : const TextStyle(color: Colors.black),
@@ -59,13 +61,13 @@ class MyTextFormField extends StatelessWidget {
           suffixIcon: suffixIcon,
           hintText: hintText,
           border: const OutlineInputBorder(
-            borderSide: BorderSide(width: 1.2),
+            borderSide: BorderSide(width: 1.3),
           ),
           enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(width: 1.2),
+            borderSide: BorderSide(width: 1.3),
           ),
           focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(width: 1.2),
+            borderSide: BorderSide(width: 1.5),
           )),
       inputFormatters: inputFormatter,
     );
