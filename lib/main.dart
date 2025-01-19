@@ -36,6 +36,35 @@ void main() async {
   );
 }
 
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+//         useMaterial3: true,
+//       ),
+//       home: LoginPage2(),
+//       onGenerateRoute: (settings) {
+//         switch (settings.name) {
+//           case '/mainpage':
+//             return MaterialPageRoute(builder: (context) => const MainPage());
+//           default:
+//             return MaterialPageRoute(
+//               builder: (context) => Scaffold(
+//                 appBar: AppBar(title: const Text('Erro')),
+//                 body: const Center(child: Text('Página não encontrada')),
+//               ),
+//             );
+//         }
+//       },
+//     );
+//   }
+// }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -47,19 +76,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: LoginPage2(),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/mainpage':
-            return MaterialPageRoute(builder: (context) => const MainPage());
-          default:
-            return MaterialPageRoute(
-              builder: (context) => Scaffold(
-                appBar: AppBar(title: const Text('Erro')),
-                body: const Center(child: Text('Página não encontrada')),
-              ),
-            );
-        }
+      home: const LoginPage2(),
+      routes: {
+        '/mainpage': (context) => const MainPage(),
+        '/loginpage2': (context) => LoginPage2(),
+      },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => Scaffold(
+            appBar: AppBar(title: const Text('Erro')),
+            body: const Center(child: Text('Página não encontrada')),
+          ),
+        );
       },
     );
   }
