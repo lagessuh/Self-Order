@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 //import 'package:self_order/commons/responsive.dart';
-import 'package:self_order/pages/home/home.dart';
+import 'package:self_order/pages/home/home_page.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
 import 'package:self_order/services/users/users_services.dart';
 

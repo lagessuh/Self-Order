@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage2> {
                                         controller: _emailController,
                                         decoration: const InputDecoration(
                                           label: Text("Email"),
-                                          prefixIcon: Icon(Icons.person,
+                                          prefixIcon: Icon(Icons.email,
                                               color: Colors.black),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(width: 1.3),

@@ -117,13 +117,14 @@ class _SignupPageState extends State<SignupPage2> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: MyTextFormField(
+                            prefixIcon: Icon(Icons.person, color: Colors.black),
                             onSaved: (value) => userModel.userName = value,
                             onChanged: (value) {},
-                            labelText: 'Nome completo',
+                            labelText: 'Nome',
                             textType: TextInputType.text,
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Campo usuário deve ser preenchido';
+                                return 'Campo nome deve ser preenchido';
                               }
                               return null;
                             },
@@ -144,6 +145,7 @@ class _SignupPageState extends State<SignupPage2> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: MyTextFormField(
+                            prefixIcon: Icon(Icons.email, color: Colors.black),
                             onChanged: (value) {},
                             onSaved: (value) => userModel.email = value,
                             labelText: 'E-mail',
@@ -172,6 +174,8 @@ class _SignupPageState extends State<SignupPage2> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: MyTextFormField(
+                            prefixIcon:
+                                Icon(Icons.fingerprint, color: Colors.black),
                             onChanged: (value) {},
                             onSaved: (value) => _password = value.toString(),
                             labelText: 'Senha',
@@ -229,7 +233,9 @@ class _SignupPageState extends State<SignupPage2> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            minimumSize: const Size(300, 50),
+                            minimumSize:
+                                //const Size(300, 50),
+                                const Size.fromHeight(50),
                           ),
                           child: const Text(
                             'Criar conta',
@@ -266,7 +272,9 @@ class _SignupPageState extends State<SignupPage2> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            minimumSize: const Size(300, 50),
+                            minimumSize:
+                                //const Size(300, 50),
+                                const Size.fromHeight(50),
                           ),
                           child: const Text(
                             'Já Possuo uma Conta',
