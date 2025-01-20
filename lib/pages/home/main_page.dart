@@ -458,8 +458,9 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black, // Cor do AppBar
+        backgroundColor: Colors.red, // Cor do AppBar
         title: Text(
           'Main Page',
           style: TextStyle(color: Colors.white), // Texto em branco
@@ -467,7 +468,7 @@ class _MainPageState extends State<MainPage> {
         actions: [
           // Ícone de logout à direita
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.red), // Ícone de logout
+            icon: Icon(Icons.logout, color: Colors.black), // Ícone de logout
             onPressed: _logout,
           ),
         ],
@@ -495,35 +496,76 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.home, color: Colors.red), // Ícone vermelho
-              title: Text('Home', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.pop(context);
-                _onDrawerItemTapped(0);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person, color: Colors.red), // Ícone vermelho
-              title: Text('Profile', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.pop(context);
-                _onDrawerItemTapped(1);
-              },
-            ),
-            ListTile(
-              leading:
-                  Icon(Icons.settings, color: Colors.red), // Ícone vermelho
-              title: Text('Settings', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.pop(context);
-                _onDrawerItemTapped(2);
-              },
-            ),
+            ExpansionTile(
+                title: const Text("Gerenciamento de Perfis",
+                    style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.person, color: Colors.red), //add icon
+                childrenPadding:
+                    const EdgeInsets.only(left: 60), //children padding
+                children: [
+                  ListTile(
+                    title: Text('Relatório de usuários',
+                        style: TextStyle(color: Colors.white)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _onDrawerItemTapped(0);
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Cadastro de Usuários',
+                        style: TextStyle(color: Colors.white)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _onDrawerItemTapped(1);
+                    },
+                  ),
+                ]),
+            ExpansionTile(
+                title: const Text("Gerenciamento de Produtos",
+                    style: TextStyle(color: Colors.white)),
+                leading:
+                    const Icon(Icons.settings, color: Colors.red), //add icon
+                childrenPadding:
+                    const EdgeInsets.only(left: 60), //children padding
+                children: [
+                  ListTile(
+                    title: Text('Cadastro de Produtos',
+                        style: TextStyle(color: Colors.white)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _onDrawerItemTapped(2);
+                    },
+                  ),
+                  ListTile(
+                    // onTap: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const ProductListPage(),
+                    //     ),
+                    //   );
+                    // },
+                    title: const Text('Listagem de Produtos',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                  ListTile(
+                    // onTap: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const CategoryAddPage(),
+                    //     ),
+                    //   );
+                    // },
+                    title: const Text('Categorias de Produtos',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ])
           ],
         ),
       ),
       bottomNavigationBar: NavigationBar(
+        backgroundColor: Colors.red,
         selectedIndex: _bottomNavIndex,
         onDestinationSelected: (int position) {
           setState(() {
