@@ -521,7 +521,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ]),
             ExpansionTile(
-                title: const Text("Gerenciamento de Produtos",
+                title: const Text("Gerenciamento do Cardápio",
                     style: TextStyle(color: Colors.white)),
                 leading:
                     const Icon(Icons.settings, color: Colors.red), //add icon
@@ -560,7 +560,36 @@ class _MainPageState extends State<MainPage> {
                     title: const Text('Categorias de Produtos',
                         style: TextStyle(color: Colors.white)),
                   ),
-                ])
+                ]),
+            ExpansionTile(
+                title: const Text("Gerenciamento de Pedidos",
+                    style: TextStyle(color: Colors.white)),
+                leading:
+                    const Icon(Icons.settings, color: Colors.red), //add icon
+                childrenPadding:
+                    const EdgeInsets.only(left: 60), //children padding
+                children: [
+                  ListTile(
+                    title: Text('Administração de Pedidos',
+                        style: TextStyle(color: Colors.white)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _onDrawerItemTapped(2);
+                    },
+                  ),
+                  ListTile(
+                    // onTap: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const ProductListPage(),
+                    //     ),
+                    //   );
+                    // },
+                    title: const Text('Listagem de Pedidos',
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ]),
           ],
         ),
       ),

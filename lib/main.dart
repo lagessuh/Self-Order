@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:self_order/pages/autenticacao/login_page.dart';
+//import 'package:self_order/pages/autenticacao/login_page.dart';
 import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/pages/home/main_page.dart';
 import 'package:self_order/services/users/users_services.dart';
