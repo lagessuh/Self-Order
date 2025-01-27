@@ -1,35 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Category {
+class Categoria {
   String? id;
-  String? title;
-  String? description;
+  String? titulo;
+  String? descricao;
 
-  Category({
+  Categoria({
     this.id,
-    this.title,
-    this.description,
+    this.titulo,
+    this.descricao,
   });
 
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "title": title,
-      "description": description,
+      "titulo": titulo,
+      "descricao": descricao,
     };
   }
 
-  Category.fromJson(DocumentSnapshot doc) {
+  Categoria.fromJson(DocumentSnapshot doc) {
     id = doc.id;
-    title = doc.get('title');
-    description = doc.get('description');
+    titulo = doc.get('titulo');
+    descricao = doc.get('descricao');
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'description': description,
-      'title': title,
+      'titulo': titulo,
+      'descricao': descricao,
     };
   }
+
+  static fromSnapShot(QueryDocumentSnapshot<Map<String, dynamic>> doc) {}
+
+  static fromDocument(DocumentSnapshot<Object?> e) {}
 }

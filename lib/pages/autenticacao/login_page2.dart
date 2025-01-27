@@ -1,11 +1,11 @@
-import 'package:self_order/helpers/responsive.dart';
+import 'package:self_order/utils/helpers/responsive.dart';
 import 'package:self_order/pages/autenticacao/singup2.dart';
 import 'package:self_order/pages/home/main_page.dart';
 import 'package:self_order/services/users/users_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:self_order/models/users/users.dart';
-import 'package:self_order/helpers/validators.dart';
+import 'package:self_order/utils/helpers/validators.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';

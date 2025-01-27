@@ -425,6 +425,8 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:self_order/pages/cardapio/categoria/categoria_add_page.dart';
+import 'package:self_order/pages/cardapio/produto_add_page.dart';
 import 'package:self_order/pages/home/home_page.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
 
@@ -529,12 +531,20 @@ class _MainPageState extends State<MainPage> {
                     const EdgeInsets.only(left: 60), //children padding
                 children: [
                   ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProdutoAddPage(),
+                        ),
+                      );
+                    },
                     title: Text('Cadastro de Produtos',
                         style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onDrawerItemTapped(2);
-                    },
+                    // onTap: () {
+                    //   Navigator.pop(context);
+                    //   _onDrawerItemTapped(2);
+                    // },
                   ),
                   ListTile(
                     // onTap: () {
@@ -549,15 +559,15 @@ class _MainPageState extends State<MainPage> {
                         style: TextStyle(color: Colors.white)),
                   ),
                   ListTile(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const CategoryAddPage(),
-                    //     ),
-                    //   );
-                    // },
-                    title: const Text('Categorias de Produtos',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CategoriaAddPage(),
+                        ),
+                      );
+                    },
+                    title: const Text('Cadastro de categorias',
                         style: TextStyle(color: Colors.white)),
                   ),
                 ]),

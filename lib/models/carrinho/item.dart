@@ -11,17 +11,17 @@ class Item {
     this.quantidade = 1,
     this.subTotal,
   }) {
-    subTotal = produto!.price! * quantidade!;
+    subTotal = produto!.preco! * quantidade!;
   }
 
   Item copyWith({
-    Produto? product,
-    int? quantity,
+    Produto? produto,
+    int? quantidade,
     double? subTotal,
   }) {
     return Item(
-      produto: product ?? produto,
-      quantidade: quantity ?? quantidade,
+      produto: produto ?? produto,
+      quantidade: quantidade ?? quantidade,
       subTotal: subTotal ?? this.subTotal,
     );
   }
@@ -30,10 +30,10 @@ class Item {
     final result = <String, dynamic>{};
 
     if (produto != null) {
-      result.addAll({'product': produto!.toMap()});
+      result.addAll({'produto': produto!.toMap()});
     }
     if (quantidade != null) {
-      result.addAll({'quantity': quantidade});
+      result.addAll({'quantidade': quantidade});
     }
     if (subTotal != null) {
       result.addAll({'subTotal': subTotal});
@@ -45,8 +45,8 @@ class Item {
   factory Item.fromMap(Map<String, dynamic> map) {
     return Item(
       produto:
-          map['product'] != null ? Produto.fromDocument(map['product']) : null,
-      quantidade: map['quantity']?.toInt(),
+          map['produto'] != null ? Produto.fromDocument(map['produto']) : null,
+      quantidade: map['quantidade']?.toInt(),
       subTotal: map['subTotal']?.toDouble(),
     );
   }
@@ -57,7 +57,7 @@ class Item {
 
   @override
   String toString() =>
-      'CartItem(product: $produto, quantity: $quantidade, subTotal: $subTotal)';
+      'CartItem(produto: $produto, quantidade: $quantidade, subTotal: $subTotal)';
 
   @override
   bool operator ==(Object other) {

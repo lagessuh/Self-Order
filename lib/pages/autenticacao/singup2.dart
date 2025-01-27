@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:self_order/commons/responsive.dart';
 import 'package:self_order/commons/widgets/my_textformfield.dart';
-import 'package:self_order/helpers/validators.dart';
+import 'package:self_order/utils/helpers/validators.dart';
 import 'package:self_order/models/users/users.dart';
 import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/services/users/users_services.dart';

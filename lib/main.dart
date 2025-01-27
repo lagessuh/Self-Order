@@ -8,14 +8,22 @@ import 'package:self_order/pages/home/main_page.dart';
 import 'package:self_order/services/users/users_services.dart';
 
 void main() async {
+  // var options = const FirebaseOptions(
+  //     apiKey: "AIzaSyBjgcsNlHKFZ-CJtXNAK4slslrUri3q9dU",
+  //     authDomain: "self-order-ca1c1.firebaseapp.com",
+  //     projectId: "self-order-ca1c1",
+  //     storageBucket: "self-order-ca1c1.firebasestorage.app",
+  //     messagingSenderId: "107557154609",
+  //     appId: "1:107557154609:web:5fa7274c181724d13e8a10",
+  //     measurementId: "G-NH8PS27XSR");
   var options = const FirebaseOptions(
-      apiKey: "AIzaSyBjgcsNlHKFZ-CJtXNAK4slslrUri3q9dU",
-      authDomain: "self-order-ca1c1.firebaseapp.com",
-      projectId: "self-order-ca1c1",
-      storageBucket: "self-order-ca1c1.firebasestorage.app",
-      messagingSenderId: "107557154609",
-      appId: "1:107557154609:web:5fa7274c181724d13e8a10",
-      measurementId: "G-NH8PS27XSR");
+      apiKey: "AIzaSyAvL70V85C4ripLXm7xCWpxH7xkXkq_eno",
+      authDomain: "mercadinho-632c0.firebaseapp.com",
+      projectId: "mercadinho-632c0",
+      storageBucket: "mercadinho-632c0.appspot.com",
+      messagingSenderId: "840564386914",
+      appId: "1:840564386914:web:af8be599b497b2aa6f753b",
+      measurementId: "G-YBWCNVVTS1");
 
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
