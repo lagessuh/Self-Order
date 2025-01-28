@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:mime/mime.dart';
 import 'package:self_order/models/cardapio/produto.dart';
 import 'package:uuid/uuid.dart';
 
@@ -10,19 +11,31 @@ class ProdutoServices {
   //instância para upload de mídias (imagens, vídeos, pdf) para o Firebase
   final FirebaseStorage _storage = FirebaseStorage.instance;
   Produto? produto;
+
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('produtos');
+
+  //CollectionReference get _collectionRef => _firestore.collection('users');
+
   DocumentReference get _firestoreRef =>
       _firestore.doc('produtos/${produto!.id}');
-  Reference get _storageRef =>
-      _storage.ref().child('produtos').child('${produto!.id}');
 
-  Future<bool> save({Produto? product, dynamic imageFile, bool? plat}) async {
-    debugPrint('imagem (save) => ${imageFile.toString()}');
+  //Reference get _storageRef =>
+  //_storage.ref().child('produtos').child('${produto!.id}');
+
+  Future<bool> save({Produto? produto, dynamic imageFile, bool? plat}) async {
     try {
+      debugPrint("Salvando produto");
+
+      // Adiciona o documento e obtém a referência
       final doc = await _collectionRef.add(produto!.toMap());
-      produto = produto;
-      produto!.id = doc.id;
+
+      // Atualiza o campo "id" no documento com o ID gerado pelo Firestore
+      await doc.update({'id': doc.id});
+
+      // Atualiza o objeto local
+      this.produto = produto;
+      this.produto!.id = doc.id;
 
       _uploadImage(imageFile, plat!);
       return Future.value(true);
@@ -30,14 +43,62 @@ class ProdutoServices {
       debugPrint(e.code.toString());
       return Future.value(false);
     }
-    // if (product.id == null) {
-    //   final doc = await _firestore.collection('products').add(product.toMap());
-    //   product.id = doc.id;
-    // } else {
-    //   //atualiza apenas os dados passados, se houve algum dado não passado este não será atualizado
-    //   await _firestoreRef.update(
-    //       product.toMap()); //não usar setdata, pois sobrescreve todos os dados
-    // }
+  }
+
+  _uploadImage(dynamic imageFile, bool plat) async {
+    final uuid = const Uuid().v1();
+
+    try {
+      Reference storageRef =
+          _storage.ref().child('produtos').child(produto!.id!);
+
+      debugPrint('Iniciando upload no storage ${storageRef.name}');
+
+      // Determinar o tipo MIME do arquivo
+      String? mimeType;
+      if (!plat) {
+        // Se for um arquivo
+        mimeType = lookupMimeType(imageFile.path);
+        debugPrint('Tipo MIME detectado para arquivo: $mimeType');
+      } else {
+        // Se for dados (bytes)
+        mimeType = lookupMimeType('', headerBytes: imageFile);
+        debugPrint('Tipo MIME detectado para dados: $mimeType');
+      }
+
+      // Adiciona o metadata com o tipo MIME detectado
+      SettableMetadata metadata = SettableMetadata(
+        contentType: mimeType ?? 'application/octet-stream', // Valor padrão
+      );
+
+      UploadTask task;
+      if (!plat) {
+        task = storageRef.child(uuid).putFile(
+              imageFile,
+              metadata,
+            );
+      } else {
+        task = storageRef.child(uuid).putData(
+              imageFile,
+              metadata,
+            );
+      }
+
+      // Procedimento para obter a URL de download após o upload
+      String url = await (await task.whenComplete(() {})).ref.getDownloadURL();
+
+      // Atualiza a URL da imagem no Firestore
+      DocumentReference docRef = _collectionRef.doc(produto!.id);
+      await docRef.update({
+        'id': produto!.id,
+        'image': url,
+      });
+
+      debugPrint('Upload concluído. URL da imagem: $url');
+    } on FirebaseException catch (e) {
+      debugPrint('Erro no upload: ${e.code}');
+      return Future.value(false);
+    }
   }
 
   Future<void> update(Produto produto) async {
@@ -47,7 +108,7 @@ class ProdutoServices {
         );
   }
 
-  Future<Produto?> getProductById(String? id) async {
+  Future<Produto?> getProdutoPorId(String? id) async {
     final docProduto = _firestore.collection('produtos').doc(id);
     final snapShot = await docProduto.get();
     if (snapShot.exists) {
@@ -57,63 +118,15 @@ class ProdutoServices {
     }
   }
 
-  Stream<QuerySnapshot> getAllProducts() {
+  Stream<QuerySnapshot> getAllProdutos() {
     return _collectionRef.snapshots();
   }
 
-  Future<List<Produto>> getProducts() async {
+  Future<List<Produto>> getProdutos() async {
     List<Produto> listProdutos = [];
     final result = await _collectionRef.get();
     listProdutos = result.docs.map((e) => Produto.fromSnapshot(e)).toList();
     return listProdutos;
-  }
-
-  _uploadImage(dynamic imageFile, bool plat) async {
-    //chave para persistir a imagem no firebasestorage
-    final uuid = const Uuid().v1();
-    try {
-      Reference storageRef =
-          _storage.ref().child('produtos').child(produto!.id!);
-      debugPrint('storage ${storageRef.name}');
-      //objeto para realizar o upload da imagem
-      UploadTask task;
-
-      if (!plat) {
-        debugPrint('Imagem da câmera => ${imageFile.toString()}');
-        task = storageRef.child(uuid).putFile(
-              imageFile,
-              // SettableMetadata(
-              //   contentType: 'image/jpg',
-              //   customMetadata: {'product name': product!.name!, 'description': 'Informação de arquivo', 'imageName': imageFile},
-              // ),
-            );
-      } else {
-        debugPrint('Imagem da galeria => ${imageFile.toString()}');
-
-        task = storageRef.child(uuid).putData(
-              imageFile,
-              // SettableMetadata(contentType: 'image/jpg', customMetadata: {
-              //   'product name': product!.name!,
-              //   'description': 'Informação de arquivo',
-              //   // 'imageName': File(imageFile).
-              // }),
-            );
-      }
-      //procedimento para persistir a imagem no banco de dados firebase
-      String url = await (await task.whenComplete(() {})).ref.getDownloadURL();
-      DocumentReference docRef = _collectionRef.doc(produto!.id);
-      await docRef.update({
-        'id': produto!.id,
-        'image': url,
-      });
-    } on FirebaseException catch (e) {
-      if (e.code != 'OK') {
-        debugPrint('Problemas ao gravar dados');
-      } else if (e.code == 'ABORTED') {
-        debugPrint('Inclusão de dados abortada');
-      }
-      return Future.value(false);
-    }
   }
 
   Future<bool> delete() {
@@ -142,22 +155,23 @@ class ProdutoServices {
     debugPrint(allData.toString());
   }
 
-  Future<List<DocumentSnapshot>> getProductByName(String name) => _collectionRef
-      .orderBy('name')
-      .startAt([name.toLowerCase()])
-      .endAt([
-        '${name.toLowerCase()}\uf8ff'
-      ]) //.endAt([name.toLowerCase() + '\uf8ff'])
-      .get()
-      .then((snapshot) {
-        return snapshot.docs;
-      });
+  Future<List<DocumentSnapshot>> getProdutoPorNome(String nome) =>
+      _collectionRef
+          .orderBy('nome')
+          .startAt([nome.toLowerCase()])
+          .endAt([
+            '${nome.toLowerCase()}\uf8ff'
+          ]) //.endAt([name.toLowerCase() + '\uf8ff'])
+          .get()
+          .then((snapshot) {
+            return snapshot.docs;
+          });
 
-  Future<List<DocumentSnapshot>> getProductByName2(String name) async {
+  Future<List<DocumentSnapshot>> getProdutoPorNome2(String nome) async {
     try {
       var result = _collectionRef
-          .where('name', isGreaterThanOrEqualTo: name)
-          .where('name', isLessThan: '${name}z')
+          .where('nome', isGreaterThanOrEqualTo: nome)
+          .where('nome', isLessThan: '${nome}z')
           .get()
           .then((value) {
         return value.docs;

@@ -426,7 +426,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:self_order/pages/cardapio/categoria/categoria_add_page.dart';
-import 'package:self_order/pages/cardapio/produto_add_page.dart';
+import 'package:self_order/pages/cardapio/produto/produto_add_page.dart';
 import 'package:self_order/pages/home/home_page.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
 
@@ -464,7 +464,7 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         backgroundColor: Colors.red, // Cor do AppBar
         title: Text(
-          'Main Page',
+          'Cardápio: Faça seu pedido',
           style: TextStyle(color: Colors.white), // Texto em branco
         ),
         actions: [

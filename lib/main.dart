@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:self_order/commons/mypicked_image.dart';
 //import 'package:self_order/pages/autenticacao/login_page.dart';
 import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/pages/home/main_page.dart';
@@ -37,6 +38,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider<UsersServices>(
           create: (_) => UsersServices(),
+        ),
+        ChangeNotifierProvider<MyPickedImage>(
+          create: (_) => MyPickedImage(),
         ),
       ],
       child: const MyApp(),
