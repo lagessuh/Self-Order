@@ -2,6 +2,7 @@
 //classe de dados (DTO)
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:self_order/models/users/users_access.dart';
 //import 'package:self_order/models/users/users_access.dart';
 
 class UserModel {
@@ -9,17 +10,14 @@ class UserModel {
   String? userName;
   String? email;
   String? password;
-  //String? telefone;
-  // String? aniversario;
+  UsersAccess? usersAccess;
 
-  //UsersAccess? usersAccess;
   UserModel({
     this.id,
     this.userName,
     this.email,
     this.password,
-    //this.telefone,
-    // this.aniversario,
+    this.usersAccess,
   });
 
   UserModel copyWith({
@@ -27,16 +25,14 @@ class UserModel {
     String? userName,
     String? email,
     String? password,
-    //String? telefone,
-    //String? aniversario,
+    UsersAccess? usersAccess,
   }) {
     return UserModel(
       id: id ?? this.id,
       userName: userName ?? this.userName,
       email: email ?? this.email,
       password: password ?? this.password,
-      //  telefone: telefone ?? this.telefone,
-      //  aniversario: aniversario ?? this.aniversario,
+      usersAccess: usersAccess ?? this.usersAccess,
     );
   }
 
@@ -46,8 +42,7 @@ class UserModel {
       'userName': userName,
       'email': email,
       'password': password,
-      //  'telefone': telefone,
-      //  'aniversario': aniversario,
+      'usersAccess': usersAccess,
     };
   }
 
@@ -57,9 +52,9 @@ class UserModel {
       userName: map['userName'] != null ? map['userName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       password: map['password'] != null ? map['password'] as String : null,
-      //  telefone: map['telefone'] != null ? map['telefone'] as String : null,
-      //  aniversario:
-      //      map['aniversario'] != null ? map['aniversario'] as String : null,
+      usersAccess: map['usersAccess'] != null
+          ? UsersAccess.fromMap(map['usersAccess'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -70,8 +65,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, userName: $userName, email: $email, password: $password)';
-    //telefone: $telefone, aniversario: $aniversario)';
+    return 'UserModel(id: $id, userName: $userName, email: $email, password: $password, usersAccess: $usersAccess)';
   }
 
   @override
@@ -81,9 +75,8 @@ class UserModel {
     return other.id == id &&
         other.userName == userName &&
         other.email == email &&
-        other.password == password;
-    //  other.telefone == telefone &&
-    //  other.aniversario == aniversario;
+        other.password == password &&
+        other.usersAccess == usersAccess;
   }
 
   Map<String, dynamic> toJson() {
@@ -91,9 +84,8 @@ class UserModel {
       'id': id,
       'userName': userName,
       'email': email,
-      //  'phone': telefone,
       'password': password,
-      //  'aniversario': aniversario,
+      'usersAccess': usersAccess,
     };
   }
 
@@ -101,14 +93,17 @@ class UserModel {
     id = doc.id;
     userName = doc.get('userName');
     email = doc.get('email');
-    //  telefone = doc.get('phone');
-    //  aniversario = doc.get('aniversario');
+    usersAccess = doc.get('usersAccess') != null
+        ? UsersAccess.fromMap(doc.get('usersAccess'))
+        : null; // Inicialize o acesso se estiver presente
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ userName.hashCode ^ email.hashCode ^ password.hashCode;
-    //  telefone.hashCode ^
-    //  aniversario.hashCode;
+    return id.hashCode ^
+        userName.hashCode ^
+        email.hashCode ^
+        password.hashCode ^
+        usersAccess.hashCode;
   }
 }

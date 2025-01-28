@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 class UsersAccess {
+  String? id;
   String? tipoUsuario;
   UsersAccess({
     this.tipoUsuario,
