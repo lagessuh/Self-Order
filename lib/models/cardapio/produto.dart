@@ -5,10 +5,10 @@ class Produto {
   String? nome;
   String? descricao;
   String? marca;
-  bool? deleted;
+  //bool? deleted;
   String? idCategoria;
   String? image;
-  String? url;
+  //String? url;
   double? preco;
   String? unidade;
   int? quantidade;
@@ -28,8 +28,9 @@ class Produto {
       this.idCategoria,
       this.preco,
       this.unidade,
-      this.quantidade = 0,
-      this.deleted = false}) {
+      this.quantidade = 0
+      //this.deleted = false
+      }) {
     nome = nome ?? '';
     image = image;
   }
@@ -44,7 +45,7 @@ class Produto {
     unidade = doc.get('unidade') as String;
     preco = doc.get('preco') as double;
     idCategoria = doc.get('idCategoria') as String;
-    deleted = (doc.get('deleted') ?? false) as bool;
+    //deleted = (doc.get('deleted') ?? false) as bool;
     image = doc.get('image');
   }
 
@@ -57,7 +58,7 @@ class Produto {
         unidade = doc.get('unidade') as String,
         preco = doc.get('preco') as double,
         idCategoria = doc.get('idCategoria') as String,
-        deleted = (doc.get('deleted') ?? false) as bool,
+        //deleted = (doc.get('deleted') ?? false) as bool,
         image = doc.get('image');
 
 //convert to map (Json) -> preparação do formato compatível com o JSON (FIREBASE)
@@ -72,7 +73,7 @@ class Produto {
       'preco': preco,
       'image': image,
       'idCategoria': idCategoria,
-      'deleted': deleted,
+      //'deleted': deleted,
     };
   }
 

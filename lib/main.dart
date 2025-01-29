@@ -6,6 +6,8 @@ import 'package:self_order/commons/mypicked_image.dart';
 //import 'package:self_order/pages/autenticacao/login_page.dart';
 import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/pages/home/main_page.dart';
+import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
+import 'package:self_order/services/cardapio/produto_services.dart';
 import 'package:self_order/services/users/users_services.dart';
 
 void main() async {
@@ -41,6 +43,12 @@ void main() async {
         ),
         ChangeNotifierProvider<MyPickedImage>(
           create: (_) => MyPickedImage(),
+        ),
+        ChangeNotifierProvider<ProdutoServices>(
+          create: (_) => ProdutoServices(),
+        ),
+        ChangeNotifierProvider<CategoriaServices>(
+          create: (_) => CategoriaServices(),
         ),
       ],
       child: const MyApp(),

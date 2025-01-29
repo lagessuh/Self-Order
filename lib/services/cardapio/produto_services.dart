@@ -5,7 +5,7 @@ import 'package:mime/mime.dart';
 import 'package:self_order/models/cardapio/produto.dart';
 import 'package:uuid/uuid.dart';
 
-class ProdutoServices {
+class ProdutoServices extends ChangeNotifier {
   //instância para persistência dos dados no Firebase
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   //instância para upload de mídias (imagens, vídeos, pdf) para o Firebase
@@ -101,11 +101,38 @@ class ProdutoServices {
     }
   }
 
-  Future<void> update(Produto produto) async {
-    await _collectionRef.doc(produto.id).update(
-          // {"name": product.name, "price": product.price},
-          produto.toMap(),
-        );
+  // Future<void> updateProduto(Produto produto) async {
+  //   await _collectionRef.doc(produto.id).update(
+  //         // {"name": product.name, "price": product.price},
+  //         produto.toMap(),
+  //       );
+  // }
+
+  Future<bool> updateProduto(Produto produto) async {
+    try {
+      if (produto.id == null || produto.id!.isEmpty) {
+        throw Exception("ID do produto inválido");
+      }
+
+      // Validação básica dos dados do produto
+      if (produto.nome!.isEmpty || produto.preco! <= 0) {
+        throw Exception("Dados do produto inválidos");
+      }
+
+      final docRef = _collectionRef.doc(produto.id);
+
+      // Atualiza o documento no Firestore
+      await docRef.update(produto.toMap());
+      debugPrint("Produto atualizado com sucesso: ${produto.id}");
+
+      return true; // Sucesso
+    } on FirebaseException catch (e) {
+      debugPrint("Erro ao atualizar produto: ${e.code} - ${e.message}");
+      throw Exception("Erro ao atualizar produto: ${e.message}");
+    } catch (e) {
+      debugPrint("Erro inesperado ao atualizar produto: $e");
+      throw Exception("Erro inesperado: $e");
+    }
   }
 
   Future<Produto?> getProdutoPorId(String? id) async {
@@ -129,22 +156,35 @@ class ProdutoServices {
     return listProdutos;
   }
 
-  Future<bool> delete() {
-    try {
-      _firestoreRef.update({'deleted': true});
-      return Future.value(true);
-    } on FirebaseException {
-      return Future.value(false);
-    }
-  }
+  // Future<bool> deleteProduto() {
+  //   try {
+  //     _firestoreRef.update({'deleted': true});
+  //     return Future.value(true);
+  //   } on FirebaseException {
+  //     return Future.value(false);
+  //   }
+  // }
 
-  Future<QuerySnapshot> getDocs() async {
-    QuerySnapshot querySnapshot = await _collectionRef.get();
-    for (int i = 0; i < querySnapshot.docs.length; i++) {
-      var a = querySnapshot.docs[i];
-      // debugPrint(a.id);
+  Future<bool> deleteProduto({String? id}) async {
+    try {
+      if (id == null || id.isEmpty) {
+        throw Exception("ID do produto inválido");
+      }
+
+      final docRef = _collectionRef.doc(id);
+
+      // Hard delete: remove o documento completamente
+      await docRef.delete();
+      debugPrint("Produto removido completamente: $id");
+
+      return true; // Sucesso
+    } on FirebaseException catch (e) {
+      debugPrint("Erro ao excluir produto: ${e.code} - ${e.message}");
+      throw Exception("Erro ao excluir produto: ${e.message}");
+    } catch (e) {
+      debugPrint("Erro inesperado ao excluir produto: $e");
+      throw Exception("Erro inesperado: $e");
     }
-    return querySnapshot;
   }
 
   Future<void> getData() async {

@@ -7,7 +7,7 @@ import 'package:self_order/utils/exceptions/my_firebase_exceptions.dart';
 import 'package:self_order/utils/exceptions/my_platform_exceptions.dart';
 //import 'package:uuid/uuid.dart';
 
-class CategoriaServices {
+class CategoriaServices extends ChangeNotifier {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   // final FirebaseStorage _storage = FirebaseStorage.instance;
 
