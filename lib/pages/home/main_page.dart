@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:self_order/pages/cardapio/categoria/categoria_add_page.dart';
-import 'package:self_order/pages/cardapio/produto/produto_add_page.dart';
+import 'package:provider/provider.dart';
+import 'package:self_order/pages/cardapio/categoria/categoria_list_page.dart';
 import 'package:self_order/pages/cardapio/produto/produto_list_page.dart';
+import 'package:self_order/pages/carrinho/carrinho_page.dart';
 import 'package:self_order/pages/home/home_page.dart';
+import 'package:self_order/pages/pedido/lista_pedidos.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
+import 'package:self_order/services/carrinho/carrinho_services.dart';
 import 'package:self_order/services/users/user_profile_list.dart';
+import 'package:self_order/services/users/users_services.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -38,23 +42,89 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.red, // Cor do AppBar
+        backgroundColor: Colors.red,
         title: Text(
           'Cardápio: Faça seu pedido',
           style: TextStyle(color: Colors.white),
         ),
+        elevation: 2.0,
         actions: [
-          // Ícone de logout à direita
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.black),
-            onPressed: _logout,
+          Consumer<CarrinhoServices>(
+            builder: (context, carrinhoServices, child) {
+              return Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 24, 0),
+                child: GestureDetector(
+                  onTap: () {
+                    if (carrinhoServices.itens.isNotEmpty) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const CarrinhoPage(),
+                      ));
+                    }
+                  },
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      const Icon(
+                        Icons.shopping_cart,
+                        size: 32,
+                      ),
+                      if (carrinhoServices.itens.isNotEmpty)
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 4.0, bottom: 8.0),
+                          child: CircleAvatar(
+                            radius: 8.0,
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            child: Text(
+                              carrinhoServices.itens.length.toString(),
+                              style: const TextStyle(fontSize: 12.0),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          Consumer<UsersServices>(
+            builder: (context, userServices, child) {
+              return InkWell(
+                onTap: () {
+                  userServices.logout();
+                },
+                child: const Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              );
+            },
+          ),
+          const SizedBox(
+            width: 10,
           ),
         ],
       ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.red, // Cor do AppBar
+      //   title: Text(
+      //     'Cardápio: Faça seu pedido',
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      //   actions: [
+      //     // Ícone de logout à direita
+      //     IconButton(
+      //       icon: Icon(Icons.logout, color: Colors.black),
+      //       onPressed: _logout,
+      //     ),
+      //   ],
+      // ),
       body: [
         const HomePage(),
-        const UserProfilePage(),
-        const UserProfilePage(), // Substitua com a página de Pedidos
+        const CarrinhoPage(),
+        const ListaPedidosPage(), // Substitua com a página de Pedidos
         const UserProfilePage(), // Substitua com a página de Perfil de Usuário
       ][_bottomNavIndex],
       drawer: Drawer(
@@ -110,18 +180,18 @@ class _MainPageState extends State<MainPage> {
                 childrenPadding:
                     const EdgeInsets.only(left: 60), //children padding
                 children: [
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProdutoAddPage(),
-                        ),
-                      );
-                    },
-                    title: Text('Cadastro de Produtos',
-                        style: TextStyle(color: Colors.white)),
-                  ),
+                  // ListTile(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => const ProdutoAddPage(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   title: Text('Produtos',
+                  //       style: TextStyle(color: Colors.white)),
+                  // ),
                   ListTile(
                     onTap: () {
                       Navigator.push(
@@ -131,7 +201,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                       );
                     },
-                    title: const Text('Listagem de Produtos',
+                    title: const Text('Produtos',
                         style: TextStyle(color: Colors.white)),
                   ),
                   ListTile(
@@ -139,11 +209,11 @@ class _MainPageState extends State<MainPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CategoriaAddPage(),
+                          builder: (context) => const CategoriaListPage(),
                         ),
                       );
                     },
-                    title: const Text('Cadastro de categorias',
+                    title: const Text('Categorias',
                         style: TextStyle(color: Colors.white)),
                   ),
                 ]),

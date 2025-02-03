@@ -218,6 +218,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "google_fonts",
+      "rootUri": "file:///C:/Users/suell/AppData/Local/Pub/Cache/hosted/pub.dev/google_fonts-6.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
       "name": "hive",
       "rootUri": "file:///C:/Users/suell/AppData/Local/Pub/Cache/hosted/pub.dev/hive-2.2.3",
       "packageUri": "lib/",
@@ -524,7 +530,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-01-28T04:46:18.021827Z",
+  "generated": "2025-02-03T06:40:15.953398Z",
   "generator": "pub",
   "generatorVersion": "3.5.3",
   "flutterRoot": "file:///C:/Projetos/flutter/flutter",

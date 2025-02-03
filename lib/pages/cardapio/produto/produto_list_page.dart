@@ -11,7 +11,7 @@ class ProdutoListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProdutoServices produtoServices = ProdutoServices();
-    final Produto produto = Produto();
+    //final Produto produto = Produto();
 
     return Scaffold(
       appBar: AppBar(

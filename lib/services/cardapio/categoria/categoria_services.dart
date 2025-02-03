@@ -53,8 +53,57 @@ class CategoriaServices extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateCategoria(Categoria categoria) async {
+    try {
+      if (categoria.id == null || categoria.id!.isEmpty) {
+        throw Exception("ID do produto inválido");
+      }
+
+      // Validação básica dos dados da categoria
+      if (categoria.titulo!.isEmpty) {
+        throw Exception("Dados da categoria inválidos");
+      }
+
+      final docRef = _collectionRef.doc(categoria.id);
+
+      // Atualiza o documento no Firestore
+      await docRef.update(categoria.toMap());
+      debugPrint("Produto atualizado com sucesso: ${categoria.id}");
+
+      return true; // Sucesso
+    } on FirebaseException catch (e) {
+      debugPrint("Erro ao atualizar categoria: ${e.code} - ${e.message}");
+      throw Exception("Erro ao atualizar categoria: ${e.message}");
+    } catch (e) {
+      debugPrint("Erro inesperado ao atualizar categoria: $e");
+      throw Exception("Erro inesperado: $e");
+    }
+  }
+
   void update(Categoria categoria) async {
     await _collectionRef.doc(categoria.id).update(categoria.toJson());
+  }
+
+  Future<bool> deleteCategoria({String? id}) async {
+    try {
+      if (id == null || id.isEmpty) {
+        throw Exception("ID da categoria é inválido");
+      }
+
+      final docRef = _collectionRef.doc(id);
+
+      // Hard delete: remove o documento completamente
+      await docRef.delete();
+      debugPrint("Categoria removida completamente: $id");
+
+      return true; // Sucesso
+    } on FirebaseException catch (e) {
+      debugPrint("Erro ao excluir categoria: ${e.code} - ${e.message}");
+      throw Exception("Erro ao excluir categoria: ${e.message}");
+    } catch (e) {
+      debugPrint("Erro inesperado ao excluir categoria: $e");
+      throw Exception("Erro inesperado: $e");
+    }
   }
 
   void delete(String id) async {
@@ -71,8 +120,12 @@ class CategoriaServices extends ChangeNotifier {
     return snapshot["titulo"];
   }
 
+  Stream<QuerySnapshot> getAllCategorias() {
+    return _collectionRef.snapshots();
+  }
+
   //-- Get all categories --
-  Future<List> getAllCategorias() async {
+  Future<List> getAllCategorias2() async {
     try {
       final snapshot = await firestore.collection('categoria').get();
       final list =

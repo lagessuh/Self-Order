@@ -8,6 +8,7 @@ import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/pages/home/main_page.dart';
 import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
 import 'package:self_order/services/cardapio/produto_services.dart';
+import 'package:self_order/services/carrinho/carrinho_services.dart';
 import 'package:self_order/services/users/users_services.dart';
 
 void main() async {
@@ -49,6 +50,9 @@ void main() async {
         ),
         ChangeNotifierProvider<CategoriaServices>(
           create: (_) => CategoriaServices(),
+        ),
+        ChangeNotifierProvider<CarrinhoServices>(
+          create: (_) => CarrinhoServices(),
         ),
       ],
       child: const MyApp(),

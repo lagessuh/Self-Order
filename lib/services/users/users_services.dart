@@ -18,6 +18,17 @@ class UsersServices extends ChangeNotifier {
       _firestore.doc('users/${userModel!.id}');
   CollectionReference get _collectionRef => _firestore.collection('users');
 
+  //para controlar o acesso do usuário
+  bool _loading = false;
+  bool get loading => _loading;
+  // ignore: unnecessary_null_comparison
+  bool get isLoggedIn => userModel! != null; //para ser utilizado na Gaveta
+
+  set loading(bool value) {
+    _loading = value;
+    notifyListeners();
+  }
+
   UsersServices() {
     _loadingCurrentUser();
   }
@@ -349,5 +360,14 @@ class UsersServices extends ChangeNotifier {
 
   Stream<QuerySnapshot> getUsers() {
     return _collectionRef.snapshots();
+  }
+
+  void logout() async {
+    debugPrint("efetuando logout");
+    _auth.signOut();
+    userModel == null;
+    notifyListeners();
+    _loading = false;
+    notifyListeners();
   }
 }
