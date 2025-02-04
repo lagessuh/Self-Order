@@ -905,8 +905,9 @@ class _ProdutoEditPageState extends State<ProdutoEditPage> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value?.isEmpty ?? true) return 'Campo obrigatório';
-                        if (double.tryParse(value!) == null)
+                        if (double.tryParse(value!) == null) {
                           return 'Digite um número válido';
+                        }
                         return null;
                       },
                     ),
@@ -922,8 +923,9 @@ class _ProdutoEditPageState extends State<ProdutoEditPage> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value?.isEmpty ?? true) return 'Campo obrigatório';
-                        if (int.tryParse(value!) == null)
+                        if (int.tryParse(value!) == null) {
                           return 'Digite um número inteiro';
+                        }
                         return null;
                       },
                     ),

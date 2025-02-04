@@ -1,17 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-//import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:self_order/models/users/users.dart';
-import 'package:uuid/uuid.dart';
-//import 'package:uuid/uuid.dart';
 
 class UsersServices extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+  //final FirebaseStorage _storage = FirebaseStorage.instance;
   UserModel? userModel;
 
   DocumentReference get _firestoreRef =>
@@ -306,10 +301,26 @@ class UsersServices extends ChangeNotifier {
     await _firestoreRef.set(userModel!.toJson());
   }
 
-  updateUser(UserModel users, dynamic imageFile, bool plat) {
-    _firestoreRef.update(users.toJson());
-    // _uploadImage(imageFile, plat);
+  Future<void> updateUser(UserModel users) async {
+    try {
+      // Verifica se _firestoreRef não é nulo
+      if (_firestoreRef != null) {
+        await _firestoreRef.update(users.toJson());
+      } else {
+        throw Exception('Referência do Firestore não está disponível');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao atualizar usuário: $e');
+      }
+      rethrow; // Relança o erro para ser tratado no local de chamada
+    }
   }
+
+  // updateUser(UserModel users, dynamic imageFile, bool plat) {
+  //   _firestoreRef.update(users.toJson());
+  //   // _uploadImage(imageFile, plat);
+  // }
 
   // //método para obter as credenciais do usuário autenticado
   // _loadingCurrentUser({User? user}) async {

@@ -7,16 +7,26 @@ class Carrinho {
   UserModel? userModel;
   List<ItemCarrinho>? _itens;
   String? data; // dia do pedido
+  String? status;
 
-  Carrinho({this.userModel, List<ItemCarrinho>? itens, this.data})
-      : _itens = itens;
+  Carrinho({
+    this.userModel,
+    List<ItemCarrinho>? itens,
+    this.data,
+    this.status,
+  }) : _itens = itens;
 
   Carrinho copyWith(
-      {UserModel? userModel, List<ItemCarrinho>? itens, String? data}) {
+      {UserModel? userModel,
+      List<ItemCarrinho>? itens,
+      String? data,
+      String? status}) {
     return Carrinho(
-        userModel: userModel ?? this.userModel,
-        itens: itens ?? _itens,
-        data: data);
+      userModel: userModel ?? this.userModel,
+      itens: itens ?? _itens,
+      data: data,
+      status: status,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -31,6 +41,9 @@ class Carrinho {
     if (data != null) {
       result.addAll({'data': data!});
     }
+    if (status != null) {
+      result.addAll({'status': status!});
+    }
 
     return result;
   }
@@ -44,7 +57,8 @@ class Carrinho {
             ? List<ItemCarrinho>.from(
                 map['itens']?.map((x) => ItemCarrinho.fromMap(x)))
             : null,
-        data: map['data']);
+        data: map['data'],
+        status: map['status']);
   }
 
   String toJson() => json.encode(toMap());
@@ -54,7 +68,7 @@ class Carrinho {
 
   @override
   String toString() =>
-      'Carrinho(userModel: $userModel, itens: $_itens, date:$data)';
+      'Carrinho(userModel: $userModel, itens: $_itens, date:$data, status:$status)';
 
   @override
   bool operator ==(Object other) {
@@ -63,9 +77,11 @@ class Carrinho {
     return other is Carrinho &&
         other.userModel == userModel &&
         other.data == data &&
+        other.status == status &&
         listEquals(other._itens, _itens);
   }
 
   @override
-  int get hashCode => userModel.hashCode ^ _itens.hashCode ^ data.hashCode;
+  int get hashCode =>
+      userModel.hashCode ^ _itens.hashCode ^ data.hashCode ^ status.hashCode;
 }

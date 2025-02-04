@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:self_order/pages/cardapio/categoria/categoria_list_page.dart';
 import 'package:self_order/pages/cardapio/produto/produto_list_page.dart';
 import 'package:self_order/pages/carrinho/carrinho_page.dart';
+import 'package:self_order/pages/funcionario/funcionario_list_page.dart';
 import 'package:self_order/pages/home/home_page.dart';
 import 'package:self_order/pages/pedido/lista_pedidos.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
-import 'package:self_order/services/users/user_profile_list.dart';
 import 'package:self_order/services/users/users_services.dart';
 
 class MainPage extends StatefulWidget {
@@ -19,23 +19,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _bottomNavIndex = 0;
-
-  // Índice para Drawer (navegação)
-  int _drawerIndex = 0;
-
-  // Atualizar o índice do Drawer
-  void _onDrawerItemTapped(int index) {
-    setState(() {
-      _drawerIndex = index;
-    });
-    // Fechar o Drawer após seleção
-    Navigator.pop(context);
-  }
-
-  // Método de logout que navega para a página de login
-  void _logout() {
-    Navigator.pushReplacementNamed(context, '/loginpage2');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,21 +139,21 @@ class _MainPageState extends State<MainPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const UserProfileList(),
+                          builder: (context) => const FuncionarioListPage(),
                         ),
                       );
                     },
-                    title: Text('Relatório de usuários',
+                    title: Text('Funcionários',
                         style: TextStyle(color: Colors.white)),
                   ),
-                  ListTile(
-                    title: Text('Cadastro de Usuários',
-                        style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _onDrawerItemTapped(1);
-                    },
-                  ),
+                  // ListTile(
+                  //   title: Text('Funcionários',
+                  //       style: TextStyle(color: Colors.white)),
+                  //   onTap: () {
+                  //     Navigator.pop(context);
+                  //     _onDrawerItemTapped(1);
+                  //   },
+                  // ),
                 ]),
             ExpansionTile(
                 title: const Text("Gerenciamento do Cardápio",
@@ -229,8 +212,12 @@ class _MainPageState extends State<MainPage> {
                     title: Text('Administração de Pedidos',
                         style: TextStyle(color: Colors.white)),
                     onTap: () {
-                      Navigator.pop(context);
-                      _onDrawerItemTapped(2);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CategoriaListPage(),
+                        ),
+                      );
                     },
                   ),
                   ListTile(

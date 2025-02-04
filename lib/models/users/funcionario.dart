@@ -3,14 +3,14 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Funcionario {
+class FuncionarioModel {
   String? id;
   String? userName;
   String? email;
   String? password;
   String? matricula;
   String? funcao;
-  Funcionario({
+  FuncionarioModel({
     this.id,
     this.userName,
     this.email,
@@ -20,7 +20,7 @@ class Funcionario {
   });
   //UsersAccess? usersAccess;
 
-  Funcionario copyWith({
+  FuncionarioModel copyWith({
     String? id,
     String? userName,
     String? email,
@@ -28,7 +28,7 @@ class Funcionario {
     String? matricula,
     String? funcao,
   }) {
-    return Funcionario(
+    return FuncionarioModel(
       id: id ?? this.id,
       userName: userName ?? this.userName,
       email: email ?? this.email,
@@ -60,8 +60,8 @@ class Funcionario {
     };
   }
 
-  factory Funcionario.fromMap(Map<String, dynamic> map) {
-    return Funcionario(
+  factory FuncionarioModel.fromMap(Map<String, dynamic> map) {
+    return FuncionarioModel(
       id: map['id'] != null ? map['id'] as String : null,
       userName: map['userName'] != null ? map['userName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
@@ -71,7 +71,7 @@ class Funcionario {
     );
   }
 
-  Funcionario.fromJson(DocumentSnapshot doc) {
+  FuncionarioModel.fromJson(DocumentSnapshot doc) {
     id = doc.id;
     userName = doc.get('userName');
     email = doc.get('email');
@@ -85,11 +85,11 @@ class Funcionario {
 
   @override
   String toString() {
-    return 'Funcionario(id: $id, userName: $userName, email: $email, password: $password, matricula: $matricula, funcao: $funcao)';
+    return 'FuncionarioModel(id: $id, userName: $userName, email: $email, password: $password, matricula: $matricula, funcao: $funcao)';
   }
 
   @override
-  bool operator ==(covariant Funcionario other) {
+  bool operator ==(covariant FuncionarioModel other) {
     if (identical(this, other)) return true;
 
     return other.id == id &&
