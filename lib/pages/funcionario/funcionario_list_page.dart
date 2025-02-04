@@ -1,12 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//import 'package:self_order/models/cardapio/produto.dart';
 import 'package:self_order/models/users/funcionario.dart';
-//import 'package:self_order/pages/cardapio/produto/produto_add_page.dart';
-//import 'package:self_order/pages/cardapio/produto/produto_edit_page.dart';
 import 'package:self_order/pages/funcionario/funcionario_add_page.dart';
 import 'package:self_order/pages/funcionario/funcionario_edit_page.dart';
-//import 'package:self_order/services/cardapio/produto_services.dart';
 import 'package:self_order/services/users/funcionario_services.dart';
 
 class FuncionarioListPage extends StatelessWidget {
@@ -166,19 +162,6 @@ class FuncionarioListPage extends StatelessWidget {
                                             email: docSnapshot['email'],
                                             matricula: docSnapshot['matricula'],
                                             funcao: docSnapshot['funcao'],
-                                            // preco: (docSnapshot['preco']
-                                            //         as num?)
-                                            //     ?.toDouble(), // Garante que `preco` seja double
-                                            // quantidade:
-                                            //     docSnapshot['quantidade']
-                                            //         as int?,
-                                            // unidade: docSnapshot['unidade'],
-                                            // // deleted:
-                                            // //     docSnapshot['deleted'] as bool?,
-                                            // image: docSnapshot['image'],
-                                            // //url: docSnapshot['url'],
-                                            // idCategoria:
-                                            //     docSnapshot['idCategoria'],
                                           );
 
                                           Navigator.push(
@@ -214,7 +197,7 @@ class FuncionarioListPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 101, 85, 143),
+        backgroundColor: const Color.fromARGB(255, 255, 17, 0),
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(

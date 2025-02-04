@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:self_order/utils/helpers/responsive.dart';
 import 'package:self_order/pages/autenticacao/singup2.dart';
 import 'package:self_order/pages/home/main_page.dart';
@@ -55,7 +56,9 @@ class _LoginPageState extends State<LoginPage2> {
 // Delete info from people box
   _deleteInfo(int index) {
     box.deleteAt(index);
-    print('Item deleted from box at index: $index');
+    if (kDebugMode) {
+      print('Item deleted from box at index: $index');
+    }
   }
 
   @override
