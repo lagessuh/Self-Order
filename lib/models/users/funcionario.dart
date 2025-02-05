@@ -2,6 +2,7 @@
 //import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:self_order/models/users/users_access.dart';
 
 class FuncionarioModel {
   String? id;
@@ -10,6 +11,8 @@ class FuncionarioModel {
   String? password;
   String? matricula;
   String? funcao;
+  UsersAccess? usersAccess;
+
   FuncionarioModel({
     this.id,
     this.userName,
@@ -17,8 +20,8 @@ class FuncionarioModel {
     this.password,
     this.matricula,
     this.funcao,
+    this.usersAccess,
   });
-  //UsersAccess? usersAccess;
 
   FuncionarioModel copyWith({
     String? id,
@@ -27,6 +30,7 @@ class FuncionarioModel {
     String? password,
     String? matricula,
     String? funcao,
+    UsersAccess? usersAccess,
   }) {
     return FuncionarioModel(
       id: id ?? this.id,
@@ -35,6 +39,7 @@ class FuncionarioModel {
       password: password ?? this.password,
       matricula: matricula ?? this.matricula,
       funcao: funcao ?? this.funcao,
+      usersAccess: usersAccess ?? this.usersAccess,
     );
   }
 
@@ -46,6 +51,7 @@ class FuncionarioModel {
       'password': password,
       'matricula': matricula,
       'funcao': funcao,
+      'usersAccess': usersAccess,
     };
   }
 
@@ -57,6 +63,7 @@ class FuncionarioModel {
       'password': password,
       'matricula': matricula,
       'funcao': funcao,
+      'usersAccess': usersAccess,
     };
   }
 
@@ -68,6 +75,9 @@ class FuncionarioModel {
       password: map['password'] != null ? map['password'] as String : null,
       matricula: map['matricula'] != null ? map['matricula'] as String : null,
       funcao: map['funcao'] != null ? map['funcao'] as String : null,
+      usersAccess: map['usersAccess'] != null
+          ? UsersAccess.fromMap(map['usersAccess'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -77,6 +87,7 @@ class FuncionarioModel {
     email = doc.get('email');
     matricula = doc.get('matricula');
     funcao = doc.get('funcao');
+    usersAccess = doc.get('usersAccess');
   }
 
   //String toJson() => json.encode(toMap());
@@ -85,7 +96,7 @@ class FuncionarioModel {
 
   @override
   String toString() {
-    return 'FuncionarioModel(id: $id, userName: $userName, email: $email, password: $password, matricula: $matricula, funcao: $funcao)';
+    return 'FuncionarioModel(id: $id, userName: $userName, email: $email, password: $password, matricula: $matricula, funcao: $funcao, usersAccess: $usersAccess)';
   }
 
   @override
@@ -97,7 +108,8 @@ class FuncionarioModel {
         other.email == email &&
         other.password == password &&
         other.matricula == matricula &&
-        other.funcao == funcao;
+        other.funcao == funcao &&
+        other.usersAccess == usersAccess;
   }
 
   @override
@@ -107,6 +119,7 @@ class FuncionarioModel {
         email.hashCode ^
         password.hashCode ^
         matricula.hashCode ^
-        funcao.hashCode;
+        funcao.hashCode ^
+        usersAccess.hashCode;
   }
 }

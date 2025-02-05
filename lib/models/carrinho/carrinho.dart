@@ -29,6 +29,8 @@ class Carrinho {
     );
   }
 
+  List<ItemCarrinho>? get itens => _itens;
+
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 

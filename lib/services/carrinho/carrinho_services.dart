@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:self_order/models/cardapio/produto.dart';
 import 'package:self_order/models/carrinho/carrinho.dart';
 import 'package:self_order/models/carrinho/item_carrinho.dart';
+import 'package:self_order/models/enum/status_pedido.dart';
 import 'package:self_order/models/users/users.dart';
 import 'package:self_order/services/users/users_services.dart';
 import 'package:self_order/utils/utilities.dart';
@@ -54,36 +55,77 @@ class CarrinhoServices extends ChangeNotifier {
     notifyListeners();
   }
 
-  //carregar carrinho da base de dados
+  // //carregar carrinho da base de dados
+
+  // Stream<QuerySnapshot> loadAllCarrinho() {
+  //   // obtêm dados do carrinho da base de dados para o usuário atual
+  //   // Atualiza o objeto _items de acordo com os requisitos
+  //   return _firestore.collection('carrinhos').snapshots();
+  // }
+
+  // //salvar o carrinho na base de dados
+  // Future<void> salvarCarrinho(UserModel user) async {
+  //   // Salva os dados do carrinho na base de dados para o usuário atual
+  //   Carrinho? carrinho = Carrinho(
+  //     itens: itens,
+  //     userModel: user,
+  //     data: Utilities.getDateTime(),
+  //   );
+  //   _firestore.collection('carrinhos').add(carrinho.toMap());
+  // }
+
+  Future<void> atualizarStatusPedido(String pedidoId, String novoStatus) async {
+    try {
+      await _firestore.collection('carrinhos').doc(pedidoId).update({
+        'status': novoStatus,
+      });
+    } catch (e) {
+      debugPrint('Erro ao atualizar status do pedido: $e');
+      rethrow;
+    }
+  }
 
   Stream<QuerySnapshot> loadAllCarrinho() {
-    // obtêm dados do carrinho da base de dados para o usuário atual
-    // Atualiza o objeto _items de acordo com os requisitos
-    return _firestore.collection('carrinhos').snapshots();
+    if (userModel?.isAdmin ?? false) {
+      // Admins see all orders
+      return _firestore
+          .collection('carrinhos')
+          .orderBy('data', descending: true)
+          .snapshots();
+    } else {
+      // Regular users only see their own orders
+      return _firestore
+          .collection('carrinhos')
+          .where('userModel.id', isEqualTo: userModel?.id)
+          .orderBy('data', descending: true)
+          .snapshots();
+    }
   }
 
-  //salvar o carrinho na base de dados
-  Future<void> salvarCarrinho(UserModel user) async {
-    // Salva os dados do carrinho na base de dados para o usuário atual
-    Carrinho? carrinho = Carrinho(
-      itens: itens,
-      userModel: user,
-      data: Utilities.getDateTime(),
-    );
-    _firestore.collection('carrinhos').add(carrinho.toMap());
-  }
-
-  //salvar o carrinho na base de dados
   Future<void> cartCheckout(UserModel user) async {
     userModel = user;
-    // Salva os dados do carrinho na base de dados para o usuário atual
     Carrinho? carrinho = Carrinho(
       itens: itens,
       userModel: user,
       data: Utilities.getDateTime(),
+      status: StatusPedido.pendente.name, // Set initial status
     );
-    _firestore.collection('carrinhos').add(carrinho.toMap());
+    await _firestore.collection('carrinhos').add(carrinho.toMap());
+    _itens.clear(); // Clear cart after checkout
+    notifyListeners();
   }
+
+  // //salvar o carrinho na base de dados
+  // Future<void> cartCheckout(UserModel user) async {
+  //   userModel = user;
+  //   // Salva os dados do carrinho na base de dados para o usuário atual
+  //   Carrinho? carrinho = Carrinho(
+  //     itens: itens,
+  //     userModel: user,
+  //     data: Utilities.getDateTime(),
+  //   );
+  //   _firestore.collection('carrinhos').add(carrinho.toMap());
+  // }
 
   setUser(UsersServices userServices) {
     userModel = userServices.userModel;

@@ -1,4 +1,6 @@
-class AcessoService {
+import 'package:self_order/models/users/users_access.dart';
+
+class UsersAccessServices {
   // Simula um banco de dados ou fonte de permissões
   final Map<String, List<String>> _accessControl = {
     'adminPage': ['admin'],
