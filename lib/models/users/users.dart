@@ -3,7 +3,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:self_order/models/users/users_access.dart';
-//import 'package:self_order/models/users/users_access.dart';
 
 class UserModel {
   String? id;
