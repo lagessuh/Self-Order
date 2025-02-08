@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:self_order/commons/responsive.dart';
 import 'package:self_order/pages/autenticacao/signup.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -125,7 +125,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Consumer<UsersServices>(
+              Consumer<ClienteServices>(
                 builder: (context, usersServices, child) {
                   return Column(
                     children: [

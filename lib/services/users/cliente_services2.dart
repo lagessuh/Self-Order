@@ -1,34 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:self_order/models/users/users.dart';
+import 'package:self_order/models/users/cliente.dart';
+//import 'package:self_order/models/users/users.dart';
 
-class UsersServices extends ChangeNotifier {
+class ClienteServices extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  UserModel? userModel;
+  ClienteModel? clienteModel;
 
   DocumentReference get _firestoreRef =>
-      _firestore.doc('users/${userModel!.id}');
+      _firestore.doc('users/${clienteModel!.id}');
   CollectionReference get _collectionRef => _firestore.collection('users');
 
   //para controlar o acesso do usuário
   bool _loading = false;
   bool get loading => _loading;
   // ignore: unnecessary_null_comparison
-  bool get isLoggedIn => userModel! != null; //para ser utilizado na Gaveta
+  bool get isLoggedIn => clienteModel! != null; //para ser utilizado na Gaveta
 
   set loading(bool value) {
     _loading = value;
     notifyListeners();
   }
 
-  UsersServices() {
+  ClienteServices() {
     _loadingCurrentUser();
   }
 
   //Método para registrar o usuário no firebase console
-  Future<bool> signUp(UserModel users, bool plat) async {
+  Future<bool> signUp(ClienteModel users, bool plat) async {
     try {
       User? user = (await _auth.createUserWithEmailAndPassword(
               email: users.email!, password: users.password!))
@@ -36,7 +37,7 @@ class UsersServices extends ChangeNotifier {
       //igualando os ids
       users.id = user!.uid;
       //atualizando variável de instância
-      userModel = users;
+      clienteModel = users;
       saveUserDetails();
       return Future.value(true);
     } on FirebaseAuthException catch (error) {
@@ -54,7 +55,7 @@ class UsersServices extends ChangeNotifier {
   }
 
   Future<bool> signUp2({
-    required UserModel userModel,
+    required ClienteModel clienteModel,
     required String password,
     required Function onFail,
     required Function onSuccess,
@@ -62,15 +63,18 @@ class UsersServices extends ChangeNotifier {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
-        email: userModel.email!,
+        email: clienteModel.email!,
         password: password,
       );
 
       User user = userCredential.user!;
-      userModel.id = user.uid;
+      clienteModel.id = user.uid;
 
       // Salva os dados do usuário no Firestore usando o método toMap
-      await _firestore.collection('users').doc(user.uid).set(userModel.toMap());
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .set(clienteModel.toMap());
 
       // Carrega o usuário atual para atualizar o userModel
       await _loadingCurrentUser(user: user);
@@ -128,10 +132,10 @@ class UsersServices extends ChangeNotifier {
   Future<bool> saveData() async {
     try {
       final _docRef = FirebaseFirestore.instance.collection('users').doc(
-          userModel!
+          clienteModel!
               .id); // Usando o id do userLocal para referenciar o documento
 
-      await _docRef.set(userModel!.toJson()); // Salva os dados
+      await _docRef.set(clienteModel!.toJson()); // Salva os dados
 
       return true; // Retorna true se os dados forem salvos com sucesso
     } catch (e) {
@@ -179,17 +183,17 @@ class UsersServices extends ChangeNotifier {
 
       if (docUser.exists) {
         // Carrega os dados do usuário do Firestore
-        userModel = UserModel.fromMap(docUser.data()!);
+        clienteModel = ClienteModel.fromMap(docUser.data()!);
       } else {
         // Lidar com o caso onde os dados do usuário não estão presentes
-        userModel = UserModel(
+        clienteModel = ClienteModel(
           email: currentUser.email ?? 'anonimo@anonimo.com',
           id: currentUser.uid,
           userName: 'anônimo',
         );
       }
     } else {
-      userModel = UserModel(
+      clienteModel = ClienteModel(
         email: 'anonimo@anonimo.com',
         id: null,
         userName: 'anônimo',
@@ -199,10 +203,10 @@ class UsersServices extends ChangeNotifier {
   }
 
   saveUserDetails() async {
-    await _firestoreRef.set(userModel!.toJson());
+    await _firestoreRef.set(clienteModel!.toJson());
   }
 
-  Future<void> updateUser(UserModel users) async {
+  Future<void> updateUser(ClienteModel users) async {
     try {
       // Verifica se _firestoreRef não é nulo
       if (_firestoreRef != null) {
@@ -225,7 +229,7 @@ class UsersServices extends ChangeNotifier {
   void logout() async {
     debugPrint("efetuando logout");
     _auth.signOut();
-    userModel == null;
+    clienteModel == null;
     notifyListeners();
     _loading = false;
     notifyListeners();

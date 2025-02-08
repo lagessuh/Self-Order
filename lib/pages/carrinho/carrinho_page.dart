@@ -5,7 +5,7 @@ import 'package:self_order/commons/responsive.dart';
 import 'package:self_order/pages/carrinho/carrinho_vazio_card.dart';
 import 'package:self_order/pages/carrinho/checkout_page.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 import '../../commons/count_controller.dart';
 
@@ -39,8 +39,8 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
           ],
         ),
       ),
-      body: Consumer2<UsersServices, CarrinhoServices>(
-          builder: (context, usersServices, carrinhoServices, child) {
+      body: Consumer2<ClienteServices, CarrinhoServices>(
+          builder: (context, clienteServices, carrinhoServices, child) {
         if (carrinhoServices.itens.isEmpty) {
           return const CarrinhoVazioCard(
             title: 'Carrinho vazio',
@@ -343,7 +343,7 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              CheckoutPage(user: usersServices.userModel),
+                              CheckoutPage(user: clienteServices.clienteModel),
                         ),
                       );
                     },

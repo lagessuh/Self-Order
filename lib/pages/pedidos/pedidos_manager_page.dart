@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:self_order/models/carrinho/carrinho.dart';
-import 'package:self_order/models/enum/status_pedido.dart';
+//import 'package:self_order/models/enum/status_pedido.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
 
 class PedidoManagerPage extends StatelessWidget {
-  const PedidoManagerPage({Key? key}) : super(key: key);
+  const PedidoManagerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class PedidoManagerPage extends StatelessWidget {
       body: Consumer<CarrinhoServices>(
         builder: (_, carrinhoServices, __) {
           return StreamBuilder(
-            stream: carrinhoServices.loadAllCarrinho(),
+            stream: carrinhoServices.loadAllPedidosGerenciamento(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Center(
@@ -52,25 +52,30 @@ class PedidoManagerPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  'Cliente: ${carrinho.userModel?.userName ?? "N/A"}'),
+                                  'Cliente: ${carrinho.clienteModel?.userName ?? "N/A"}'),
                               Text('Data: ${carrinho.data}'),
                               const Divider(),
                               const Text('Alterar Status:'),
                               Wrap(
                                 spacing: 8,
-                                children: StatusPedido.values.map((status) {
+                                children: [
+                                  'Pendente',
+                                  'Em Preparo',
+                                  'Pronto',
+                                  'Entregue',
+                                  'Cancelado'
+                                ].map((status) {
                                   return ElevatedButton(
                                     onPressed: () {
                                       carrinhoServices.atualizarStatusPedido(
                                         pedidoDoc.id,
-                                        status.name,
+                                        status,
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          _getStatusColor(status.name),
+                                      backgroundColor: _getStatusColor(status),
                                     ),
-                                    child: Text(status.name),
+                                    child: Text(status),
                                   );
                                 }).toList(),
                               ),

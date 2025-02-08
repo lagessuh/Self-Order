@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
+import 'package:self_order/services/cardapio/produto_services.dart';
 
 class HomePageCategorias extends StatefulWidget {
   const HomePageCategorias({
@@ -13,8 +15,11 @@ class HomePageCategorias extends StatefulWidget {
 
 class _HomePageCategoriasState extends State<HomePageCategorias> {
   CategoriaServices categoriaServices = CategoriaServices();
+  ProdutoServices produtoServices = ProdutoServices();
+  List<QueryDocumentSnapshot>? produtos;
 
   int? tam;
+  String? categoriaSelecionada; // Definição da variável
 
   Future<int> getCategoriasLength() async {
     return await categoriaServices.getAllCategorias2().then((value) {
@@ -33,6 +38,21 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
       });
     });
   }
+
+  // Future<void> carregarProdutosPorCategoria(String categoria) async {
+  //   try {
+  //     QuerySnapshot querySnapshot =
+  //         await produtoServices.getProdutosPorCategoria(categoria);
+  //     setState(() {
+  //       produtos =
+  //           querySnapshot.docs; // Atualiza a lista de produtos com os filtrados
+  //     });
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print("Erro ao carregar produtos: $e");
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +82,12 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
                     itemBuilder: (context, index) {
                       DocumentSnapshot docSnapshot = snapshot.data!.docs[index];
                       return InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          // setState(() {
+                          //   categoriaSelecionada = docSnapshot['titulo'];
+                          // });
+                          // carregarProdutosPorCategoria(categoriaSelecionada!);
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Column(
@@ -92,45 +117,45 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
             },
           )
 
-          // child: FutureBuilder(
-          //     future: categoryServices.getCategoriesList(),
-          //     builder: (context, AsyncSnapshot<List<CategoryModel>> snapshot) {
-          //       switch (snapshot.connectionState) {
-          //         case ConnectionState.none:
-          //           return Container();
-          //         case ConnectionState.waiting:
-          //           return const CircularProgressIndicator();
-          //         case ConnectionState.active:
-          //           return Container();
-          //         case ConnectionState.done:
-          //           if (snapshot.hasData) {
-          //             final List<CategoryModel> category = snapshot.data ?? [];
-          //             if (category.isNotEmpty) {
-          //               return ListView.builder(
-          //                   itemCount: snapshot.data!.length, //categoryServices.getCategoriesList().,
-          //                   shrinkWrap: true,
-          //                   scrollDirection: Axis.horizontal,
-          //                   itemBuilder: (_, index) {
-          //                     return MyVerticalImageText(
-          //                       image: category[index].imageUrl!,
-          //                       title: category[index].title!,
-          //                       onTap: () {
-          //                         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          //                           return const SubCategoriesPage();
-          //                         }));
-          //                       },
-          //                     );
-          //                   });
-          //             } else {
-          //               return Container();
-          //             }
-          //           } else {
-          //             return Container();
-          //           }
-          //         default:
-          //           return Container();
-          //       }
-          //     }),
+          //  child: FutureBuilder(
+          // //     future: categoryServices.getCategoriesList(),
+          // //     builder: (context, AsyncSnapshot<List<CategoryModel>> snapshot) {
+          // //       switch (snapshot.connectionState) {
+          // //         case ConnectionState.none:
+          // //           return Container();
+          // //         case ConnectionState.waiting:
+          // //           return const CircularProgressIndicator();
+          // //         case ConnectionState.active:
+          // //           return Container();
+          // //         case ConnectionState.done:
+          // //           if (snapshot.hasData) {
+          // //             final List<CategoryModel> category = snapshot.data ?? [];
+          // //             if (category.isNotEmpty) {
+          // //               return ListView.builder(
+          // //                   itemCount: snapshot.data!.length, //categoryServices.getCategoriesList().,
+          // //                   shrinkWrap: true,
+          // //                   scrollDirection: Axis.horizontal,
+          // //                   itemBuilder: (_, index) {
+          // //                     return MyVerticalImageText(
+          // //                       image: category[index].imageUrl!,
+          // //                       title: category[index].title!,
+          // //                       onTap: () {
+          // //                         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          // //                           return const SubCategoriesPage();
+          // //                         }));
+          // //                       },
+          // //                     );
+          // //                   });
+          // //             } else {
+          // //               return Container();
+          // //             }
+          // //           } else {
+          // //             return Container();
+          // //           }
+          // //         default:
+          // //           return Container();
+          // //       }
+          // //     }),
           ),
     );
   }

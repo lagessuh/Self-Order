@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:self_order/models/cardapio/produto.dart';
 
 class ItemCarrinho {
@@ -43,13 +44,29 @@ class ItemCarrinho {
   }
 
   factory ItemCarrinho.fromMap(Map<String, dynamic> map) {
-    return ItemCarrinho(
-      produto:
-          map['produto'] != null ? Produto.fromDocument(map['produto']) : null,
-      quantidade: map['quantidade']?.toInt(),
-      subTotal: map['subTotal']?.toDouble(),
-    );
+    try {
+      return ItemCarrinho(
+        produto: map['produto'] != null
+            ? Produto.fromMap(Map<String, dynamic>.from(map['produto']))
+            : null,
+        quantidade: map['quantidade']?.toInt(),
+        subTotal: map['subTotal']?.toDouble(),
+      );
+    } catch (e) {
+      debugPrint('Error in ItemCarrinho.fromMap: $e');
+      debugPrint('Map content: $map');
+      rethrow;
+    }
   }
+
+  // factory ItemCarrinho.fromMap(Map<String, dynamic> map) {
+  //   return ItemCarrinho(
+  //     produto:
+  //         map['produto'] != null ? Produto.fromDocument(map['produto']) : null,
+  //     quantidade: map['quantidade']?.toInt(),
+  //     subTotal: map['subTotal']?.toDouble(),
+  //   );
+  // }
 
   String toJson() => json.encode(toMap());
 

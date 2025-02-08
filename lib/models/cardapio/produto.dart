@@ -35,7 +35,7 @@ class Produto {
     image = image;
   }
 
-  //método construtor para salvar os dados do documento firebase
+  // método construtor para salvar os dados do documento firebase
   Produto.fromDocument(DocumentSnapshot doc) {
     id = doc.id;
     nome = doc.get('nome');
@@ -47,6 +47,21 @@ class Produto {
     idCategoria = doc.get('idCategoria') as String;
     //deleted = (doc.get('deleted') ?? false) as bool;
     image = doc.get('image');
+  }
+
+  // Adicione este método à sua classe Produto
+  factory Produto.fromMap(Map<String, dynamic> map) {
+    return Produto(
+      id: map['id']?.toString(),
+      nome: map['nome']?.toString(),
+      descricao: map['descricao']?.toString(),
+      marca: map['marca']?.toString(),
+      quantidade: map['quantidade']?.toInt(),
+      unidade: map['unidade']?.toString(),
+      preco: map['preco']?.toDouble(),
+      idCategoria: map['idCategoria']?.toString(),
+      image: map['image']?.toString(),
+    );
   }
 
   Produto.fromSnapshot(DocumentSnapshot doc)

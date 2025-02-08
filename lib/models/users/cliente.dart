@@ -4,14 +4,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:self_order/models/users/users_access.dart';
 
-class UserModel {
+class ClienteModel {
   String? id;
   String? userName;
   String? email;
   String? password;
   UsersAccess? usersAccess;
 
-  UserModel({
+  ClienteModel({
     this.id,
     this.userName,
     this.email,
@@ -19,14 +19,14 @@ class UserModel {
     this.usersAccess,
   });
 
-  UserModel copyWith({
+  ClienteModel copyWith({
     String? id,
     String? userName,
     String? email,
     String? password,
     UsersAccess? usersAccess,
   }) {
-    return UserModel(
+    return ClienteModel(
       id: id ?? this.id,
       userName: userName ?? this.userName,
       email: email ?? this.email,
@@ -45,8 +45,8 @@ class UserModel {
     };
   }
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
-    return UserModel(
+  factory ClienteModel.fromMap(Map<String, dynamic> map) {
+    return ClienteModel(
       id: map['id'] != null ? map['id'] as String : null,
       userName: map['userName'] != null ? map['userName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
@@ -64,11 +64,11 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, userName: $userName, email: $email, password: $password, usersAccess: $usersAccess)';
+    return 'ClienteModel(id: $id, userName: $userName, email: $email, password: $password, usersAccess: $usersAccess)';
   }
 
   @override
-  bool operator ==(covariant UserModel other) {
+  bool operator ==(covariant ClienteModel other) {
     if (identical(this, other)) return true;
 
     return other.id == id &&
@@ -88,7 +88,7 @@ class UserModel {
     };
   }
 
-  UserModel.fromJson(DocumentSnapshot doc) {
+  ClienteModel.fromJson(DocumentSnapshot doc) {
     id = doc.id;
     userName = doc.get('userName');
     email = doc.get('email');

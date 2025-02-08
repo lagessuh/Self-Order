@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:self_order/commons/custom_textformfield.dart';
-import 'package:self_order/models/users/users.dart';
+import 'package:self_order/models/users/cliente.dart';
 import 'package:self_order/pages/autenticacao/login_page.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -19,7 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _telefone = TextEditingController();
   final TextEditingController _aniversario = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  UserModel users = UserModel();
+  ClienteModel users = ClienteModel();
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +153,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        UsersServices usersServices = UsersServices();
+                        ClienteServices usersServices = ClienteServices();
 
                         users.email = _email.text;
                         users.userName = _userName.text;

@@ -1,9 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:self_order/commons/mypicked_image.dart';
-//import 'package:self_order/pages/autenticacao/login_page.dart';
 import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/pages/home/main_page.dart';
 import 'package:self_order/pages/user/user_profile_edit_page.dart';
@@ -11,7 +12,7 @@ import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
 import 'package:self_order/services/cardapio/produto_services.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
 import 'package:self_order/services/users/funcionario_services.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 void main() async {
   // var options = const FirebaseOptions(
@@ -37,12 +38,13 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
+  await Hive.initFlutter();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<UsersServices>(
-          create: (_) => UsersServices(),
+        ChangeNotifierProvider<ClienteServices>(
+          create: (_) => ClienteServices(),
         ),
         ChangeNotifierProvider<MyPickedImage>(
           create: (_) => MyPickedImage(),
@@ -64,35 +66,6 @@ void main() async {
     ),
   );
 }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-//         useMaterial3: true,
-//       ),
-//       home: LoginPage2(),
-//       onGenerateRoute: (settings) {
-//         switch (settings.name) {
-//           case '/mainpage':
-//             return MaterialPageRoute(builder: (context) => const MainPage());
-//           default:
-//             return MaterialPageRoute(
-//               builder: (context) => Scaffold(
-//                 appBar: AppBar(title: const Text('Erro')),
-//                 body: const Center(child: Text('Página não encontrada')),
-//               ),
-//             );
-//         }
-//       },
-//     );
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

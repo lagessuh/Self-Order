@@ -98,8 +98,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:self_order/models/users/users.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/models/users/cliente.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 class UserProfileEditPage extends StatefulWidget {
   const UserProfileEditPage({super.key});
@@ -111,15 +111,16 @@ class UserProfileEditPage extends StatefulWidget {
 class _UserProfileEditPageState extends State<UserProfileEditPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  UserModel? users = UserModel();
+  ClienteModel? clienteModel = ClienteModel();
 
   @override
   void initState() {
     super.initState();
-    final userServices = Provider.of<UsersServices>(context, listen: false);
+    final clienteServices =
+        Provider.of<ClienteServices>(context, listen: false);
 
-    _nameController =
-        TextEditingController(text: userServices.userModel?.userName ?? '');
+    _nameController = TextEditingController(
+        text: clienteServices.clienteModel?.userName ?? '');
   }
 
   @override
@@ -130,14 +131,15 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
 
   void _saveProfile() {
     if (_formKey.currentState!.validate()) {
-      final userServices = Provider.of<UsersServices>(context, listen: false);
+      final clienteServices =
+          Provider.of<ClienteServices>(context, listen: false);
 
       // Atualiza o nome do usuário no modelo existente
-      userServices.userModel?.userName = _nameController.text;
+      clienteServices.clienteModel?.userName = _nameController.text;
 
-      // Verifica se o userModel não é nulo antes de passar
-      if (userServices.userModel != null) {
-        userServices.updateUser(userServices.userModel!).then((_) {
+      // Verifica se o clienteModel não é nulo antes de passar
+      if (clienteServices.clienteModel != null) {
+        clienteServices.updateUser(clienteServices.clienteModel!).then((_) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Perfil atualizado com sucesso!')),
           );
@@ -148,7 +150,7 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
           );
         });
       } else {
-        // Trata o caso de userModel ser nulo
+        // Trata o caso de clienteModel ser nulo
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erro: Usuário não encontrado')),
         );
@@ -181,13 +183,13 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
                 ),
               ),
               const SizedBox(height: 30),
-              Consumer<UsersServices>(
-                builder: (context, usersServices, child) {
+              Consumer<ClienteServices>(
+                builder: (context, clienteServices, child) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Email: ${usersServices.userModel?.email ?? "Não definido"}',
+                        'Email: ${clienteServices.clienteModel?.email ?? "Não definido"}',
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 15),

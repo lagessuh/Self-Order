@@ -207,6 +207,14 @@ class ProdutoServices extends ChangeNotifier {
             return snapshot.docs;
           });
 
+  // Método para buscar produtos filtrando por categoria
+  Future<QuerySnapshot> getProdutosPorCategoria(String categoria) async {
+    return await _firestore
+        .collection('produtos')
+        .where('categoria', isEqualTo: categoria)
+        .get();
+  }
+
   Future<List<DocumentSnapshot>> getProdutoPorNome2(String nome) async {
     try {
       var result = _collectionRef

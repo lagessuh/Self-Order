@@ -1,18 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 class UserProfileList extends StatelessWidget {
   const UserProfileList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    UsersServices usersServices = UsersServices();
+    ClienteServices clienteServices = ClienteServices();
 
     return Scaffold(
         appBar: AppBar(title: const Text("Listagem de Ambientes Comuns")),
         body: StreamBuilder<QuerySnapshot>(
-          stream: usersServices.getUsers(),
+          stream: clienteServices.getUsers(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return const Center(
@@ -26,7 +26,6 @@ class UserProfileList extends StatelessWidget {
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: docSnap.length,
-                  //productManager.allProductsByCategory.length,
                   padding: const EdgeInsets.all(4),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
@@ -40,7 +39,6 @@ class UserProfileList extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14)),
                         child: Column(
                           children: [
-                            //Image.network(docSnap[index].get('image')),
                             Text(docSnap[index].get('userName')),
                             Text(docSnap[index].get('email')),
                           ],

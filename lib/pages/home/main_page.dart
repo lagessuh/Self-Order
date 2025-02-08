@@ -6,9 +6,10 @@ import 'package:self_order/pages/carrinho/carrinho_page.dart';
 import 'package:self_order/pages/funcionario/funcionario_list_page.dart';
 import 'package:self_order/pages/home/home_page.dart';
 import 'package:self_order/pages/pedidos/lista_pedidos_page.dart';
+import 'package:self_order/pages/pedidos/pedidos_manager_page.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -71,7 +72,7 @@ class _MainPageState extends State<MainPage> {
               );
             },
           ),
-          Consumer<UsersServices>(
+          Consumer<ClienteServices>(
             builder: (context, userServices, child) {
               return InkWell(
                 onTap: () {
@@ -221,14 +222,14 @@ class _MainPageState extends State<MainPage> {
                     },
                   ),
                   ListTile(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const ProductListPage(),
-                    //     ),
-                    //   );
-                    // },
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PedidoManagerPage(),
+                        ),
+                      );
+                    },
                     title: const Text('Listagem de Pedidos',
                         style: TextStyle(color: Colors.white)),
                   ),

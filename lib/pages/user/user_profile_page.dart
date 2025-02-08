@@ -94,7 +94,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:self_order/services/users/users_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
 
 class UserProfilePage extends StatelessWidget {
   const UserProfilePage({super.key});
@@ -104,10 +104,10 @@ class UserProfilePage extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(25.0),
-        child: Consumer<UsersServices>(
-          builder: (context, usersServices, child) {
-            // Verificação se userModel existe
-            if (usersServices.userModel == null) {
+        child: Consumer<ClienteServices>(
+          builder: (context, clienteServices, child) {
+            // Verificação se clienteModel existe
+            if (clienteServices.clienteModel == null) {
               return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -149,10 +149,10 @@ class UserProfilePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nome: ${usersServices.userModel?.userName?.toUpperCase() ?? 'Não definido'}',
+                            'Nome: ${clienteServices.clienteModel?.userName?.toUpperCase() ?? 'Não definido'}',
                           ),
                           Text(
-                            'Email: ${usersServices.userModel?.email ?? 'Não definido'}',
+                            'Email: ${clienteServices.clienteModel?.email ?? 'Não definido'}',
                           ),
                         ],
                       )
