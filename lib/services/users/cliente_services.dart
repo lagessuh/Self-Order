@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:self_order/models/users/cliente.dart';
-import 'package:self_order/models/users/users_access.dart';
+//import 'package:self_order/models/users/users_access.dart';
 import 'package:self_order/services/users/users_access_services.dart';
 
 class ClienteServices extends ChangeNotifier {
@@ -319,7 +319,7 @@ class ClienteServices extends ChangeNotifier {
         clienteModel = ClienteModel.fromMap(docUser.data()!);
         debugPrint("Dados carregados: ${clienteModel!.toJson()}");
       } else {
-        debugPrint("Usuário não encontrado no Firestore.");
+        debugPrint("Cliente não encontrado no Firestore.");
         clienteModel = ClienteModel(
           email: currentUser.email ?? 'anonimo@anonimo.com',
           id: currentUser.uid,
@@ -387,10 +387,10 @@ class ClienteServices extends ChangeNotifier {
   // Modificação no updateUser para verificar permissões
   Future<void> updateUser(ClienteModel users) async {
     try {
-      // Verifica se tem permissão para atualizar usuário
-      if (!(await checkPermission('manage_users'))) {
-        throw Exception('Sem permissão para atualizar usuários');
-      }
+      // // Verifica se tem permissão para atualizar usuário
+      // if (!(await checkPermission('manage_users'))) {
+      //   throw Exception('Sem permissão para atualizar usuários');
+      // }
 
       if (_firestoreRef != null) {
         await _firestoreRef.update(users.toJson());

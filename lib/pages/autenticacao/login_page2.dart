@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
+import 'package:self_order/services/users/cliente_services.dart';
+import 'package:self_order/services/users/funcionario_services.dart';
+import 'package:self_order/services/users/users_access_services.dart';
 //import 'package:self_order/services/carrinho/carrinho_services.dart';
 import 'package:self_order/utils/helpers/responsive.dart';
 import 'package:self_order/pages/autenticacao/singup2.dart';
 import 'package:self_order/pages/home/main_page.dart';
-import 'package:self_order/services/users/cliente_services.dart';
+//import 'package:self_order/services/users/cliente_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:self_order/models/users/cliente.dart';
@@ -24,7 +27,7 @@ class _LoginPageState extends State<LoginPage2> {
   bool isChecked = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final ClienteModel _clienteModel = ClienteModel();
+  // final ClienteModel _clienteModel = ClienteModel();
   late Box box;
 
   @override
@@ -169,8 +172,10 @@ class _LoginPageState extends State<LoginPage2> {
                             top: 30,
                           ),
                           child: Center(
-                            child: Consumer<ClienteServices>(
-                              builder: (_, clienteServices, __) {
+                            child: Consumer3<UsersAccessServices,
+                                ClienteServices, FuncionarioServices>(
+                              builder: (_, userAccessServices, clienteServices,
+                                  funcionarioServices, __) {
                                 return Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -251,7 +256,7 @@ class _LoginPageState extends State<LoginPage2> {
                                           : 450,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          clienteServices.signIn(
+                                          userAccessServices.signInUsers(
                                             email: _emailController.text,
                                             password: _passwordController.text,
                                             onSuccess: () {
@@ -263,8 +268,18 @@ class _LoginPageState extends State<LoginPage2> {
                                                   Provider.of<ClienteServices>(
                                                       context,
                                                       listen: false);
+                                              final usersAccessServices =
+                                                  Provider.of<
+                                                          UsersAccessServices>(
+                                                      context,
+                                                      listen: false);
+                                              final funcionarioServices =
+                                                  Provider.of<
+                                                          FuncionarioServices>(
+                                                      context,
+                                                      listen: false);
                                               carrinhoServices
-                                                  .setUser(clienteServices);
+                                                  .setUser(usersAccessServices);
                                               saveLoginHive();
                                               Navigator.pushReplacement(
                                                 context,

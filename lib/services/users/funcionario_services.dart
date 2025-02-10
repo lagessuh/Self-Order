@@ -248,6 +248,8 @@ class FuncionarioServices extends ChangeNotifier {
   CollectionReference get _collectionRef =>
       _firestore.collection('funcionarios');
 
+  // bool isFuncionario;
+
   //para controlar o acesso do usuário
   bool _loading = false;
   bool get loading => _loading;

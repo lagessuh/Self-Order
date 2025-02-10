@@ -45,11 +45,14 @@ class _FuncionarioEditPageState extends State<FuncionarioEditPage> {
         funcionarioServices
             .updateUser(funcionarioServices.funcionarioModel!)
             .then((_) {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Perfil atualizado com sucesso!')),
           );
+          // ignore: use_build_context_synchronously
           Navigator.pop(context);
         }).catchError((error) {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Erro ao atualizar: $error')),
           );

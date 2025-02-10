@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:self_order/pages/cardapio/categoria/categoria_list_page.dart';
@@ -10,6 +12,8 @@ import 'package:self_order/pages/pedidos/pedidos_manager_page.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
 import 'package:self_order/services/users/cliente_services.dart';
+import 'package:self_order/services/users/funcionario_services.dart';
+import 'package:self_order/services/users/users_access_services.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -20,6 +24,40 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _bottomNavIndex = 0;
+  bool isFuncionario = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserRole();
+  }
+
+  Future<void> _checkUserRole() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Verifica se o usuário está na coleção "funcionarios"
+      DocumentSnapshot docFuncionario = await FirebaseFirestore.instance
+          .collection('funcionarios')
+          .doc(user.uid)
+          .get();
+      if (docFuncionario.exists) {
+        setState(() {
+          isFuncionario = true;
+        });
+      } else {
+        // Caso não encontre, verifica na coleção "clientes"
+        DocumentSnapshot docCliente = await FirebaseFirestore.instance
+            .collection('clientes')
+            .doc(user.uid)
+            .get();
+        if (docCliente.exists) {
+          setState(() {
+            isFuncionario = false;
+          });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,49 +72,48 @@ class _MainPageState extends State<MainPage> {
         elevation: 2.0,
         actions: [
           Consumer<CarrinhoServices>(
-            builder: (context, carrinhoServices, child) {
-              return Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 24, 0),
-                child: GestureDetector(
-                  onTap: () {
-                    if (carrinhoServices.itens.isNotEmpty) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const CarrinhoPage(),
-                      ));
-                    }
-                  },
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      const Icon(
-                        Icons.shopping_cart,
-                        size: 32,
-                      ),
-                      if (carrinhoServices.itens.isNotEmpty)
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 4.0, bottom: 8.0),
-                          child: CircleAvatar(
-                            radius: 8.0,
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            child: Text(
-                              carrinhoServices.itens.length.toString(),
-                              style: const TextStyle(fontSize: 12.0),
-                            ),
+              builder: (context, carrinhoServices, child) {
+            return Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 24, 0),
+              child: GestureDetector(
+                onTap: () {
+                  if (carrinhoServices.itens.isNotEmpty) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const CarrinhoPage(),
+                    ));
+                  }
+                },
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    const Icon(
+                      Icons.shopping_cart,
+                      size: 32,
+                    ),
+                    if (carrinhoServices.itens.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+                        child: CircleAvatar(
+                          radius: 8.0,
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          child: Text(
+                            carrinhoServices.itens.length.toString(),
+                            style: const TextStyle(fontSize: 12.0),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
-              );
-            },
-          ),
-          Consumer<ClienteServices>(
-            builder: (context, userServices, child) {
+              ),
+            );
+          }),
+          Consumer3<ClienteServices, FuncionarioServices, UsersAccessServices>(
+            builder: (context, userServices, funcionarioServices,
+                usersAccessServices, child) {
               return InkWell(
                 onTap: () {
-                  userServices.logout();
+                  usersAccessServices.logout(context);
                 },
                 child: const Icon(
                   Icons.exit_to_app,
@@ -91,152 +128,122 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.red, // Cor do AppBar
-      //   title: Text(
-      //     'Cardápio: Faça seu pedido',
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      //   actions: [
-      //     // Ícone de logout à direita
-      //     IconButton(
-      //       icon: Icon(Icons.logout, color: Colors.black),
-      //       onPressed: _logout,
-      //     ),
-      //   ],
-      // ),
       body: [
         const HomePage(),
         const CarrinhoPage(),
         const ListaPedidosPage(), // Substitua com a página de Pedidos
         const UserProfilePage(), // Substitua com a página de Perfil de Usuário
       ][_bottomNavIndex],
-      drawer: Drawer(
-        backgroundColor: Colors.black, // Cor de fundo do Drawer
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black, // Cor de fundo do DrawerHeader
+      drawer: isFuncionario
+          ? Drawer(
+              backgroundColor: Colors.black, // Cor de fundo do Drawer
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Colors.black, // Cor de fundo do DrawerHeader
+                    ),
+                    child: Text(
+                      'Menu',
+                      style: TextStyle(
+                        color: Colors.white, // Texto em branco
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  ExpansionTile(
+                      title: const Text("Gerenciamento de Perfis",
+                          style: TextStyle(color: Colors.white)),
+                      leading: const Icon(Icons.person,
+                          color: Colors.red), //add icon
+                      childrenPadding:
+                          const EdgeInsets.only(left: 60), //children padding
+                      children: [
+                        ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const FuncionarioListPage(),
+                              ),
+                            );
+                          },
+                          title: Text('Funcionários',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ]),
+                  ExpansionTile(
+                      title: const Text("Gerenciamento do Cardápio",
+                          style: TextStyle(color: Colors.white)),
+                      leading: const Icon(Icons.settings,
+                          color: Colors.red), //add icon
+                      childrenPadding:
+                          const EdgeInsets.only(left: 60), //children padding
+                      children: [
+                        ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProdutoListPage(),
+                              ),
+                            );
+                          },
+                          title: const Text('Produtos',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                        ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CategoriaListPage(),
+                              ),
+                            );
+                          },
+                          title: const Text('Categorias',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ]),
+                  ExpansionTile(
+                      title: const Text("Gerenciamento de Pedidos",
+                          style: TextStyle(color: Colors.white)),
+                      leading: const Icon(Icons.settings,
+                          color: Colors.red), //add icon
+                      childrenPadding:
+                          const EdgeInsets.only(left: 60), //children padding
+                      children: [
+                        ListTile(
+                          title: Text('Administração de Pedidos',
+                              style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CategoriaListPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PedidoManagerPage(),
+                              ),
+                            );
+                          },
+                          title: const Text('Listagem de Pedidos',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ]),
+                ],
               ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white, // Texto em branco
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ExpansionTile(
-                title: const Text("Gerenciamento de Perfis",
-                    style: TextStyle(color: Colors.white)),
-                leading: const Icon(Icons.person, color: Colors.red), //add icon
-                childrenPadding:
-                    const EdgeInsets.only(left: 60), //children padding
-                children: [
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FuncionarioListPage(),
-                        ),
-                      );
-                    },
-                    title: Text('Funcionários',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                  // ListTile(
-                  //   title: Text('Funcionários',
-                  //       style: TextStyle(color: Colors.white)),
-                  //   onTap: () {
-                  //     Navigator.pop(context);
-                  //     _onDrawerItemTapped(1);
-                  //   },
-                  // ),
-                ]),
-            ExpansionTile(
-                title: const Text("Gerenciamento do Cardápio",
-                    style: TextStyle(color: Colors.white)),
-                leading:
-                    const Icon(Icons.settings, color: Colors.red), //add icon
-                childrenPadding:
-                    const EdgeInsets.only(left: 60), //children padding
-                children: [
-                  // ListTile(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const ProdutoAddPage(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   title: Text('Produtos',
-                  //       style: TextStyle(color: Colors.white)),
-                  // ),
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProdutoListPage(),
-                        ),
-                      );
-                    },
-                    title: const Text('Produtos',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CategoriaListPage(),
-                        ),
-                      );
-                    },
-                    title: const Text('Categorias',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                ]),
-            ExpansionTile(
-                title: const Text("Gerenciamento de Pedidos",
-                    style: TextStyle(color: Colors.white)),
-                leading:
-                    const Icon(Icons.settings, color: Colors.red), //add icon
-                childrenPadding:
-                    const EdgeInsets.only(left: 60), //children padding
-                children: [
-                  ListTile(
-                    title: Text('Administração de Pedidos',
-                        style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CategoriaListPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PedidoManagerPage(),
-                        ),
-                      );
-                    },
-                    title: const Text('Listagem de Pedidos',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                ]),
-          ],
-        ),
-      ),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         backgroundColor: Colors.red,
         selectedIndex: _bottomNavIndex,
@@ -267,6 +274,246 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
+
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:self_order/pages/cardapio/categoria/categoria_list_page.dart';
+// import 'package:self_order/pages/cardapio/produto/produto_list_page.dart';
+// import 'package:self_order/pages/carrinho/carrinho_page.dart';
+// import 'package:self_order/pages/funcionario/funcionario_list_page.dart';
+// import 'package:self_order/pages/home/home_page.dart';
+// import 'package:self_order/pages/pedidos/lista_pedidos_page.dart';
+// import 'package:self_order/pages/pedidos/pedidos_manager_page.dart';
+// import 'package:self_order/pages/user/user_profile_page.dart';
+// import 'package:self_order/services/carrinho/carrinho_services.dart';
+// import 'package:self_order/services/users/cliente_services.dart';
+// import 'package:self_order/services/users/funcionario_services.dart';
+// import 'package:self_order/services/users/users_access_services.dart';
+
+// class MainPage extends StatefulWidget {
+//   const MainPage({super.key});
+
+//   @override
+//   State<MainPage> createState() => _MainPageState();
+// }
+
+// class _MainPageState extends State<MainPage> {
+//   int _bottomNavIndex = 0;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.black,
+//       appBar: AppBar(
+//         backgroundColor: Colors.red,
+//         title: Text(
+//           'Cardápio: Faça seu pedido',
+//           style: TextStyle(color: Colors.white),
+//         ),
+//         elevation: 2.0,
+//         actions: [
+//           Consumer<CarrinhoServices>(
+//             builder: (context, carrinhoServices, child) {
+//               return Padding(
+//                 padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 24, 0),
+//                 child: GestureDetector(
+//                   onTap: () {
+//                     if (carrinhoServices.itens.isNotEmpty) {
+//                       Navigator.of(context).push(MaterialPageRoute(
+//                         builder: (context) => const CarrinhoPage(),
+//                       ));
+//                     }
+//                   },
+//                   child: Stack(
+//                     alignment: Alignment.topCenter,
+//                     children: [
+//                       const Icon(
+//                         Icons.shopping_cart,
+//                         size: 32,
+//                       ),
+//                       if (carrinhoServices.itens.isNotEmpty)
+//                         Padding(
+//                           padding:
+//                               const EdgeInsets.only(left: 4.0, bottom: 8.0),
+//                           child: CircleAvatar(
+//                             radius: 8.0,
+//                             backgroundColor: Colors.red,
+//                             foregroundColor: Colors.white,
+//                             child: Text(
+//                               carrinhoServices.itens.length.toString(),
+//                               style: const TextStyle(fontSize: 12.0),
+//                             ),
+//                           ),
+//                         ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             },
+//           ),
+//           Consumer3<ClienteServices, FuncionarioServices, UsersAccessServices>(
+//             builder: (context, userServices, funcionarioServices,
+//                 usersAccessServices, child) {
+//               return InkWell(
+//                 onTap: () {
+//                   usersAccessServices.logout(context);
+//                 },
+//                 child: const Icon(
+//                   Icons.exit_to_app,
+//                   color: Colors.white,
+//                   size: 32,
+//                 ),
+//               );
+//             },
+//           ),
+//           const SizedBox(
+//             width: 10,
+//           ),
+//         ],
+//       ),
+//       body: [
+//         const HomePage(),
+//         const CarrinhoPage(),
+//         const ListaPedidosPage(), // Substitua com a página de Pedidos
+//         const UserProfilePage(), // Substitua com a página de Perfil de Usuário
+//       ][_bottomNavIndex],
+//       drawer: Drawer(
+//         backgroundColor: Colors.black, // Cor de fundo do Drawer
+//         child: ListView(
+//           padding: EdgeInsets.zero,
+//           children: <Widget>[
+//             DrawerHeader(
+//               decoration: BoxDecoration(
+//                 color: Colors.black, // Cor de fundo do DrawerHeader
+//               ),
+//               child: Text(
+//                 'Menu',
+//                 style: TextStyle(
+//                   color: Colors.white, // Texto em branco
+//                   fontSize: 24,
+//                 ),
+//               ),
+//             ),
+//             ExpansionTile(
+//                 title: const Text("Gerenciamento de Perfis",
+//                     style: TextStyle(color: Colors.white)),
+//                 leading: const Icon(Icons.person, color: Colors.red), //add icon
+//                 childrenPadding:
+//                     const EdgeInsets.only(left: 60), //children padding
+//                 children: [
+//                   ListTile(
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => const FuncionarioListPage(),
+//                         ),
+//                       );
+//                     },
+//                     title: Text('Funcionários',
+//                         style: TextStyle(color: Colors.white)),
+//                   ),
+//                 ]),
+//             ExpansionTile(
+//                 title: const Text("Gerenciamento do Cardápio",
+//                     style: TextStyle(color: Colors.white)),
+//                 leading:
+//                     const Icon(Icons.settings, color: Colors.red), //add icon
+//                 childrenPadding:
+//                     const EdgeInsets.only(left: 60), //children padding
+//                 children: [
+//                   ListTile(
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => const ProdutoListPage(),
+//                         ),
+//                       );
+//                     },
+//                     title: const Text('Produtos',
+//                         style: TextStyle(color: Colors.white)),
+//                   ),
+//                   ListTile(
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => const CategoriaListPage(),
+//                         ),
+//                       );
+//                     },
+//                     title: const Text('Categorias',
+//                         style: TextStyle(color: Colors.white)),
+//                   ),
+//                 ]),
+//             ExpansionTile(
+//                 title: const Text("Gerenciamento de Pedidos",
+//                     style: TextStyle(color: Colors.white)),
+//                 leading:
+//                     const Icon(Icons.settings, color: Colors.red), //add icon
+//                 childrenPadding:
+//                     const EdgeInsets.only(left: 60), //children padding
+//                 children: [
+//                   ListTile(
+//                     title: Text('Administração de Pedidos',
+//                         style: TextStyle(color: Colors.white)),
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => const CategoriaListPage(),
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                   ListTile(
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => const PedidoManagerPage(),
+//                         ),
+//                       );
+//                     },
+//                     title: const Text('Listagem de Pedidos',
+//                         style: TextStyle(color: Colors.white)),
+//                   ),
+//                 ]),
+//           ],
+//         ),
+//       ),
+//       bottomNavigationBar: NavigationBar(
+//         backgroundColor: Colors.red,
+//         selectedIndex: _bottomNavIndex,
+//         onDestinationSelected: (int position) {
+//           setState(() {
+//             _bottomNavIndex = position;
+//           });
+//         },
+//         destinations: const <NavigationDestination>[
+//           NavigationDestination(
+//             icon: Icon(Icons.home_outlined),
+//             label: 'Início',
+//           ),
+//           NavigationDestination(
+//             icon: Icon(Icons.shopping_cart_outlined),
+//             label: 'Carrinho',
+//           ),
+//           NavigationDestination(
+//             icon: Icon(Icons.line_style_outlined),
+//             label: 'Pedidos',
+//           ),
+//           NavigationDestination(
+//             icon: Icon(Icons.account_box_outlined),
+//             label: 'Perfil de Usuário',
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 
 

@@ -150,6 +150,7 @@ import 'package:self_order/pages/autenticacao/login_page2.dart';
 import 'package:self_order/pages/carrinho/carrinho_vazio_card.dart';
 import 'package:self_order/services/carrinho/carrinho_services.dart';
 import 'package:self_order/services/users/cliente_services.dart';
+//import 'package:self_order/services/users/cliente_services.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key, this.user});

@@ -105,4 +105,6 @@ class ClienteModel {
         password.hashCode ^
         usersAccess.hashCode;
   }
+
+  // get clienteModel => null;
 }

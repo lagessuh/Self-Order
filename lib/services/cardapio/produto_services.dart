@@ -207,12 +207,40 @@ class ProdutoServices extends ChangeNotifier {
             return snapshot.docs;
           });
 
-  // Método para buscar produtos filtrando por categoria
-  Future<QuerySnapshot> getProdutosPorCategoria(String categoria) async {
-    return await _firestore
+  // // Método para buscar produtos filtrando por categoria
+  // Future<QuerySnapshot> getProdutosPorCategoria(String categoria) async {
+  //   return await _firestore
+  //       .collection('produtos')
+  //       .where('categoria', isEqualTo: categoria)
+  //       .get();
+  // }
+
+  Stream<QuerySnapshot> getProdutosPorCategoria(String categoriaId) {
+    return FirebaseFirestore.instance
         .collection('produtos')
-        .where('categoria', isEqualTo: categoria)
-        .get();
+        .where('idCategoria', isEqualTo: categoriaId)
+        .snapshots();
+  }
+
+  // Método para buscar itens filtrados por categoria e texto
+  Future<List<Produto>> getProdutosFiltrados(String searchText) async {
+    try {
+      Query query = _firestore.collection('produtos');
+
+      if (searchText.isNotEmpty) {
+        query = query
+            .where('nome', isGreaterThanOrEqualTo: searchText)
+            .where('nome', isLessThanOrEqualTo: searchText + '\uf8ff');
+      }
+
+      QuerySnapshot snapshot = await query.get();
+
+      return snapshot.docs
+          .map((doc) => Produto.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Erro ao filtrar produtos: $e');
+    }
   }
 
   Future<List<DocumentSnapshot>> getProdutoPorNome2(String nome) async {

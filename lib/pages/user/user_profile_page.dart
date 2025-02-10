@@ -92,22 +92,102 @@
 //   }
 // }
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:self_order/services/users/cliente_services.dart';
+import 'package:self_order/services/users/users_access_services.dart';
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
+
+  @override
+  State<UserProfilePage> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Map<String, dynamic>? userData;
+  bool isFuncionario = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+
+    // Verifica na coleção de funcionários primeiro
+    DocumentSnapshot funcionarioDoc =
+        await _firestore.collection('funcionarios').doc(currentUser.uid).get();
+
+    if (funcionarioDoc.exists) {
+      setState(() {
+        userData = funcionarioDoc.data() as Map<String, dynamic>;
+        isFuncionario = true;
+      });
+      return;
+    }
+
+    // Se não for funcionário, verifica na coleção de clientes
+    DocumentSnapshot clienteDoc =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    if (clienteDoc.exists) {
+      setState(() {
+        userData = clienteDoc.data() as Map<String, dynamic>;
+        isFuncionario = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(25.0),
-        child: Consumer<ClienteServices>(
-          builder: (context, clienteServices, child) {
+        child: Consumer<UsersAccessServices>(
+          builder: (context, usersAccessServices, child) {
             // Verificação se clienteModel existe
-            if (clienteServices.clienteModel == null) {
+            // if (usersAccessServices.clienteModel == null) {
+            //   return const Center(
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Icon(Icons.error_outline, size: 50, color: Colors.red),
+            //         SizedBox(height: 16),
+            //         Text(
+            //           'Usuário não carregado',
+            //           style: TextStyle(fontSize: 18),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }
+
+            // if (usersAccessServices.funcionarioModel == null) {
+            //   return const Center(
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Icon(Icons.error_outline, size: 50, color: Colors.red),
+            //         SizedBox(height: 16),
+            //         Text(
+            //           'Usuário não carregado',
+            //           style: TextStyle(fontSize: 18),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }
+
+            if (userData == null) {
               return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -149,11 +229,15 @@ class UserProfilePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nome: ${clienteServices.clienteModel?.userName?.toUpperCase() ?? 'Não definido'}',
+                            'Nome: ${userData?['userName']?.toUpperCase() ?? 'Não definido'}',
                           ),
                           Text(
-                            'Email: ${clienteServices.clienteModel?.email ?? 'Não definido'}',
+                            'Email: ${userData?['email'] ?? 'Não definido'}',
                           ),
+                          Text(
+                              'Tipo: ${isFuncionario ? 'Funcionário' : 'Cliente'}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       )
                     ]),
