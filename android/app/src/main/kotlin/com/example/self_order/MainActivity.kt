@@ -1,4 +1,4 @@
-package com.example.self_order
+package com.example.mercadinho
 
 import io.flutter.embedding.android.FlutterActivity
 

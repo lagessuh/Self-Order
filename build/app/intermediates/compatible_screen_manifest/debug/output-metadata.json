@@ -4,7 +4,7 @@
     "type": "COMPATIBLE_SCREEN_MANIFEST",
     "kind": "Directory"
   },
-  "applicationId": "com.example.self_order",
+  "applicationId": "com.example.mercadinho",
   "variantName": "debug",
   "elements": []
 }

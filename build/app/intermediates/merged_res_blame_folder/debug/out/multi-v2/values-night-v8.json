@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.self_order.app-mergeDebugResources-36:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.mercadinho.app-mergeDebugResources-36:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "C:\\Users\\suell\\Documentos\\PDM\\self_order\\android\\app\\src\\main\\res\\values-night\\styles.xml",

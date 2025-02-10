@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "107557154609",
-    "project_id": "self-order-ca1c1",
-    "storage_bucket": "self-order-ca1c1.firebasestorage.app"
+    "project_number": "840564386914",
+    "project_id": "mercadinho-632c0",
+    "storage_bucket": "mercadinho-632c0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:107557154609:android:2aaf921a2e6e227d3e8a10",
+        "mobilesdk_app_id": "1:840564386914:android:99de1e4797fc68326f753b",
         "android_client_info": {
-          "package_name": "com.example.self_order"
+          "package_name": "com.example.mercadinho"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD8wUPZXnCT8iOeNVX-jPXorvOQM7Bwn5E"
+          "current_key": "AIzaSyDZ7e2enb0qq2UH2qS7VI6m-WL8wq-TLuI"
         }
       ],
       "services": {

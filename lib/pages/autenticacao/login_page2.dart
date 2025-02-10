@@ -125,40 +125,44 @@ class _LoginPageState extends State<LoginPage2> {
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Column(
                           children: [
-                            Text(
-                              "FullStackBurger   |   Hamburgueria Gourmet ",
-                              style: TextStyle(
-                                fontSize: Responsive.isDesktop(context)
-                                    ? 26
-                                    : Responsive.isTablet(context)
-                                        ? 23
-                                        : 22,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Roboto',
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "FullStackBurger   |   Hamburgueria Gourmet ",
+                                  style: TextStyle(
+                                    fontSize: Responsive.isDesktop(context)
+                                        ? 26
+                                        : Responsive.isTablet(context)
+                                            ? 23
+                                            : 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Faça seu pedido sem a necessidade de um garçom!',
-                              style: TextStyle(
-                                fontSize: Responsive.isDesktop(context)
-                                    ? 21
-                                    : Responsive.isTablet(context)
-                                        ? 20
-                                        : 18,
-                                color: Colors.white,
-                              ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Faça seu pedido sem a necessidade de um garçom!',
+                                  style: TextStyle(
+                                    fontSize: Responsive.isDesktop(context)
+                                        ? 21
+                                        : Responsive.isTablet(context)
+                                            ? 20
+                                            : 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

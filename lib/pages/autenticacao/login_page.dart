@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: Responsive.isDesktop(context)
                       ? 30
-                      : Responsive.isTablet(context)
+                      : Responsive.isMobile(context)
                           ? 27
                           : 22,
                   color: Colors.black,

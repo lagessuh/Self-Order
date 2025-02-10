@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.self_order.app-mergeDebugResources-36:/values-in/values-in.xml",
+            "outputFile": "com.example.mercadinho.app-mergeDebugResources-36:/values-in/values-in.xml",
             "map": [
                 {
                     "source": "C:\\Users\\suell\\.gradle\\caches\\transforms-3\\bb4aceea626ef6ec2db1cf5b297099f2\\transformed\\jetified-play-services-basement-18.4.0\\res\\values-in\\values.xml",
