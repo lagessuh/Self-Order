@@ -244,8 +244,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () =>
-                      Navigator.pushNamed(context, '/userprofileeditpage'),
+                  onTap: () async {
+                    final result = await Navigator.pushNamed(
+                        context, '/userprofileeditpage');
+                    if (result == true) {
+                      _fetchUserData(); // Atualiza os dados ao retornar
+                    }
+                  },
                   child: const Card(
                     elevation: 1.0,
                     child: Padding(
@@ -253,24 +258,44 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.person_add_alt_1_outlined,
-                            size: 90.0,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
+                          Icon(Icons.person_add_alt_1_outlined, size: 90.0),
+                          SizedBox(width: 15),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Cadastro',
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               Text('Edite dados pessoais'),
+                              // onTap: () =>
+                              //     Navigator.pushNamed(context, '/userprofileeditpage'),
+                              // child: const Card(
+                              //   elevation: 1.0,
+                              //   child: Padding(
+                              //     padding:
+                              //         EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              //     child: Row(
+                              //       children: [
+                              //         Icon(
+                              //           Icons.person_add_alt_1_outlined,
+                              //           size: 90.0,
+                              //         ),
+                              //         SizedBox(
+                              //           width: 15,
+                              //         ),
+                              //         Column(
+                              //           crossAxisAlignment: CrossAxisAlignment.start,
+                              //           children: [
+                              //             Text(
+                              //               'Cadastro',
+                              //               style: TextStyle(
+                              //                 fontSize: 20,
+                              //                 fontWeight: FontWeight.bold,
+                              //               ),
+                              //             ),
+                              //             Text('Edite dados pessoais'),
                             ],
                           ),
                         ],

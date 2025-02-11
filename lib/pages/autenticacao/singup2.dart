@@ -77,21 +77,27 @@ class _SignupPageState extends State<SignupPage2> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
                   children: [
-                    Text(
-                      "FullStackBurger   |   Hamburgueria Gourmet ",
-                      style: TextStyle(
-                        fontSize: Responsive.isDesktop(context)
-                            ? 26
-                            : Responsive.isTablet(context)
-                                ? 23
-                                : 22,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'Roboto',
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "FullStackBurger | Hamburgueria Gourmet ",
+                            style: TextStyle(
+                              fontSize: Responsive.isDesktop(context)
+                                  ? 26
+                                  : Responsive.isMobile(context)
+                                      ? 14
+                                      : 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

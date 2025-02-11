@@ -393,14 +393,15 @@
 //   }
 // }
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 //import 'package:self_order/models/users/cliente.dart';
 //import 'package:self_order/models/users/funcionario.dart';
-import 'package:self_order/services/users/cliente_services.dart';
-import 'package:self_order/services/users/funcionario_services.dart';
+//import 'package:self_order/services/users/cliente_services.dart';
+//import 'package:self_order/services/users/funcionario_services.dart';
 
 class UserProfileEditPage extends StatefulWidget {
   const UserProfileEditPage({super.key});
@@ -469,8 +470,12 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
 
     try {
       User? currentUser = _auth.currentUser;
-      if (currentUser == null) {
-        throw Exception('Usuário não autenticado');
+      if (currentUser == null || currentUser.uid.isEmpty) {
+        throw Exception('❌ Usuário não autenticado ou UID inválido!');
+      }
+
+      if (kDebugMode) {
+        print("📌 UID do usuário logado: ${currentUser.uid}");
       }
 
       final updatedData = {
@@ -478,48 +483,45 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
         'updatedAt': FieldValue.serverTimestamp(),
       };
 
-      if (isFuncionario) {
-        await _firestore
-            .collection('funcionarios')
-            .doc(currentUser.uid)
-            .update(updatedData);
-      } else {
-        await _firestore
-            .collection('users')
-            .doc(currentUser.uid)
-            .update(updatedData);
+      DocumentReference userDocRef = _firestore
+          .collection(isFuncionario ? 'funcionarios' : 'users')
+          .doc(currentUser.uid);
+
+      // Verifica se o documento existe ANTES de atualizar
+      DocumentSnapshot userDoc = await userDocRef.get();
+      if (!userDoc.exists) {
+        if (kDebugMode) {
+          print("❌ ERRO: Documento do usuário não encontrado no Firestore!");
+        }
+        throw Exception('Documento do usuário não encontrado!');
       }
 
-      // Atualiza o provider apropriado
-      if (isFuncionario) {
-        final funcionarioServices =
-            // ignore: use_build_context_synchronously
-            Provider.of<FuncionarioServices>(context, listen: false);
-        if (funcionarioServices.funcionarioModel != null) {
-          funcionarioServices.funcionarioModel!.userName = _nameController.text;
-          await funcionarioServices
-              .updateUser(funcionarioServices.funcionarioModel!);
-        }
-      } else {
-        final clienteServices =
-            // ignore: use_build_context_synchronously
-            Provider.of<ClienteServices>(context, listen: false);
-        if (clienteServices.clienteModel != null) {
-          clienteServices.clienteModel!.userName = _nameController.text;
-          await clienteServices.updateUser(clienteServices.clienteModel!);
-        }
+      // Atualiza o nome do usuário
+      await userDocRef.update(updatedData);
+      if (kDebugMode) {
+        print("✅ Usuário atualizado com sucesso!");
       }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Perfil atualizado com sucesso!')),
+          const SnackBar(content: Text('✅ Perfil atualizado com sucesso!')),
         );
-        Navigator.pop(context);
+        Navigator.pop(context, true); // Retorna "true" para indicar atualização
       }
+
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('✅ Perfil atualizado com sucesso!')),
+      //   );
+      //   Navigator.pop(context);
+      // }
     } catch (error) {
+      if (kDebugMode) {
+        print("❌ Erro ao atualizar usuário: $error");
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao atualizar: $error')),
+          SnackBar(content: Text('❌ Erro ao atualizar: $error')),
         );
       }
     }
@@ -605,3 +607,65 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
     );
   }
 }
+
+
+// Future<void> _saveProfile() async {
+  //   if (!_formKey.currentState!.validate()) return;
+
+  //   try {
+  //     User? currentUser = _auth.currentUser;
+  //     if (currentUser == null) {
+  //       throw Exception('Usuário não autenticado');
+  //     }
+
+  //     final updatedData = {
+  //       'userName': _nameController.text,
+  //       'updatedAt': FieldValue.serverTimestamp(),
+  //     };
+
+  //     if (isFuncionario) {
+  //       await _firestore
+  //           .collection('funcionarios')
+  //           .doc(currentUser.uid)
+  //           .update(updatedData);
+  //     } else {
+  //       await _firestore
+  //           .collection('users')
+  //           .doc(currentUser.uid)
+  //           .update(updatedData);
+  //     }
+
+  //     // Atualiza o provider apropriado
+  //     if (isFuncionario) {
+  //       final funcionarioServices =
+  //           // ignore: use_build_context_synchronously
+  //           Provider.of<FuncionarioServices>(context, listen: false);
+  //       if (funcionarioServices.funcionarioModel != null) {
+  //         funcionarioServices.funcionarioModel!.userName = _nameController.text;
+  //         await funcionarioServices
+  //             .updateUser(funcionarioServices.funcionarioModel!);
+  //       }
+  //     } else {
+  //       final clienteServices =
+  //           // ignore: use_build_context_synchronously
+  //           Provider.of<ClienteServices>(context, listen: false);
+  //       if (clienteServices.clienteModel != null) {
+  //         clienteServices.clienteModel!.userName = _nameController.text;
+  //         await clienteServices.updateUser(clienteServices.clienteModel!);
+  //       }
+  //     }
+
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Perfil atualizado com sucesso!')),
+  //       );
+  //       Navigator.pop(context);
+  //     }
+  //   } catch (error) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Erro ao atualizar: $error')),
+  //       );
+  //     }
+  //   }
+  // }

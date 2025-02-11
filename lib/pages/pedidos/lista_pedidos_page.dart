@@ -709,7 +709,7 @@ class ListaPedidosPage extends StatelessWidget {
                                         Text(items[index]['produto']['marca']),
                                         Text(items[index]['produto']['nome']),
                                         SizedBox(
-                                          width: 400,
+                                          width: 300,
                                           child: Text(
                                             items[index]['produto']
                                                 ['descricao'],
