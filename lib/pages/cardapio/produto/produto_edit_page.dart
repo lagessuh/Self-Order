@@ -672,6 +672,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:self_order/commons/mypicked_image.dart';
+import 'package:self_order/commons/responsive.dart';
 import 'package:self_order/models/cardapio/produto.dart';
 import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
 import 'package:self_order/services/cardapio/produto_services.dart';
@@ -806,13 +807,16 @@ class _ProdutoEditPageState extends State<ProdutoEditPage> {
       }
 
       if (mounted) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Produto atualizado com sucesso!')),
         );
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao atualizar produto: $e')),
         );
@@ -822,146 +826,179 @@ class _ProdutoEditPageState extends State<ProdutoEditPage> {
     }
   }
 
+  EdgeInsets _getResponsivePadding(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return const EdgeInsets.all(80);
+    } else if (Responsive.isTablet(context)) {
+      return const EdgeInsets.all(70);
+    }
+    return const EdgeInsets.all(40);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 0, 0, 0),
       appBar: AppBar(
-        title: const Text("Editar Produto"),
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
+        title: const Text(
+          "Editar Produto",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Consumer3<ProdutoServices, MyPickedImage, CategoriaServices>(
-          builder: (context, produtoServices, myPickedImage, categoriaServices,
-              child) {
-            return Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    const Text(
-                      "Editando Produto",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 2, 32, 3),
-                        fontSize: 28,
-                        fontFamily: 'Lustria',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    GestureDetector(
-                      onTap: _isLoading
-                          ? null
-                          : () async {
-                              bool picked = await myPickedImage.myPickedImage();
-                              setState(() => _imageUpdate = picked);
-                            },
-                      child: _imageUpdate && kIsWeb
-                          ? ClipOval(
-                              child: Image.memory(
-                                myPickedImage.webImage!,
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : ClipOval(
-                              child: Image.network(
-                                widget.produto?.image ?? 'URL_DA_IMAGEM_PADRÃO',
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.image, size: 150),
-                              ),
-                            ),
-                    ),
-                    const SizedBox(height: 30),
-                    _buildCategoriaDropdown(
-                        categoriaServices), // Adicionado aqui
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _nomeController,
-                      label: 'Nome',
-                      validator: (value) =>
-                          value?.isEmpty ?? true ? 'Campo obrigatório' : null,
-                    ),
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _descricaoController,
-                      label: 'Descrição',
-                      validator: (value) =>
-                          value?.isEmpty ?? true ? 'Campo obrigatório' : null,
-                    ),
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _marcaController,
-                      label: 'Marca',
-                    ),
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _precoController,
-                      label: 'Preço',
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) return 'Campo obrigatório';
-                        if (double.tryParse(value!) == null) {
-                          return 'Digite um número válido';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _unidadeController,
-                      label: 'Unidade',
-                    ),
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _quantidadeController,
-                      label: 'Quantidade',
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) return 'Campo obrigatório';
-                        if (int.tryParse(value!) == null) {
-                          return 'Digite um número inteiro';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: _getResponsivePadding(context),
+          child: Card(
+            margin: const EdgeInsets.all(16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child:
+                  Consumer3<ProdutoServices, MyPickedImage, CategoriaServices>(
+                builder: (context, produtoServices, myPickedImage,
+                    categoriaServices, child) {
+                  return Form(
+                    key: _formKey,
+                    child: Column(
                       children: [
-                        ElevatedButton(
-                          onPressed:
-                              _isLoading ? null : () => Navigator.pop(context),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red),
-                          child: const Text("Cancelar"),
+                        const SizedBox(height: 50),
+                        const Text(
+                          "Editando Produto",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 2, 32, 3),
+                            fontSize: 28,
+                            fontFamily: 'Lustria',
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: _isLoading
+                        const SizedBox(height: 30),
+                        GestureDetector(
+                          onTap: _isLoading
                               ? null
-                              : () => _salvarProduto(context, myPickedImage),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                      color: Colors.white),
+                              : () async {
+                                  bool picked =
+                                      await myPickedImage.myPickedImage();
+                                  setState(() => _imageUpdate = picked);
+                                },
+                          child: _imageUpdate && kIsWeb
+                              ? ClipOval(
+                                  child: Image.memory(
+                                    myPickedImage.webImage!,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
                                 )
-                              : const Text("Salvar"),
+                              : ClipOval(
+                                  child: Image.network(
+                                    widget.produto?.image ??
+                                        'URL_DA_IMAGEM_PADRÃO',
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(Icons.image, size: 150),
+                                  ),
+                                ),
+                        ),
+                        const SizedBox(height: 30),
+                        _buildCategoriaDropdown(
+                            categoriaServices), // Adicionado aqui
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _nomeController,
+                          label: 'Nome',
+                          validator: (value) => value?.isEmpty ?? true
+                              ? 'Campo obrigatório'
+                              : null,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _descricaoController,
+                          label: 'Descrição',
+                          validator: (value) => value?.isEmpty ?? true
+                              ? 'Campo obrigatório'
+                              : null,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _marcaController,
+                          label: 'Marca',
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _precoController,
+                          label: 'Preço',
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true)
+                              return 'Campo obrigatório';
+                            if (double.tryParse(value!) == null) {
+                              return 'Digite um número válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _unidadeController,
+                          label: 'Unidade',
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _quantidadeController,
+                          label: 'Quantidade',
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true)
+                              return 'Campo obrigatório';
+                            if (int.tryParse(value!) == null) {
+                              return 'Digite um número inteiro';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              child: const Text("Cancelar"),
+                            ),
+                            ElevatedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () =>
+                                      _salvarProduto(context, myPickedImage),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white),
+                                    )
+                                  : const Text("Salvar"),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

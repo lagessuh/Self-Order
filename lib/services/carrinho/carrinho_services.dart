@@ -66,9 +66,9 @@ class CarrinhoServices extends ChangeNotifier {
 
   // Método específico para funcionários gerenciarem pedidos
   Stream<QuerySnapshot> loadAllPedidosGerenciamento() {
-    if (funcionarioModel?.id == null) {
-      throw Exception('Funcionário não está logado');
-    }
+    // if (funcionarioModel?.id == null) {
+    //   throw Exception('Funcionário não está logado');
+    // }
 
     // Todos os funcionários podem ver todos os pedidos para gerenciamento
     return _firestore
@@ -77,21 +77,52 @@ class CarrinhoServices extends ChangeNotifier {
         .snapshots();
   }
 
-  // Método para atualizar status do pedido (usado por funcionários)
-  Future<void> atualizarStatusPedido(String pedidoId, String novoStatus) async {
-    try {
-      if (funcionarioModel?.id == null) {
-        throw Exception(
-            'Apenas funcionários podem atualizar o status do pedido');
-      }
+  // // Método específico para funcionários gerenciarem pedidos
+  // Stream<QuerySnapshot> loadAllPedidosEditGerenciamento() {
+  //   // if (funcionarioModel?.id == null) {
+  //   //   throw Exception('Funcionário não está logado');
+  //   // }
 
-      await _firestore.collection('carrinhos').doc(pedidoId).update({
+  //   // Todos os funcionários podem ver todos os pedidos para gerenciamento
+  //   return _firestore
+  //       .collection('carrinhos')
+  //       .orderBy('data', descending: true)
+  //       .snapshots();
+  // }
+
+  Stream<QuerySnapshot> loadAllPedidosEditGerenciamento({String? status}) {
+    Query query = _firestore.collection('carrinhos');
+
+    if (status != null && status != 'Todos') {
+      query = query.where('status', isEqualTo: status);
+      if (kDebugMode) {
+        print('Filtrando por status: $status');
+      }
+    } else {
+      if (kDebugMode) {
+        print('Sem filtro de status');
+      }
+    }
+    return query.orderBy('data', descending: true).snapshots();
+  }
+
+  // Método para atualizar status do pedido (usado por funcionários)
+  Future<void> atualizarStatusPedido(
+      String carrinhoId, String novoStatus) async {
+    try {
+      // if (funcionarioModel?.id == null) {
+      //   throw Exception(
+      //       'Apenas funcionários podem atualizar o status do pedido');
+      // }
+      final currentUser = getCurrentUser();
+
+      await _firestore.collection('carrinhos').doc(carrinhoId).update({
         'status': novoStatus,
-        'ultimaAtualizacao': DateTime.now().toIso8601String(),
-        'atualizadoPor': {
-          'funcionarioId': funcionarioModel!.id,
-          'funcionarioNome': funcionarioModel!.userName,
-        }
+        // 'ultimaAtualizacao': DateTime.now().toIso8601String(),
+        // 'atualizadoPor': {
+        //   'funcionarioId': funcionarioModel!.id,
+        //   'funcionarioNome': funcionarioModel!.userName,
+        // }
       });
 
       notifyListeners();

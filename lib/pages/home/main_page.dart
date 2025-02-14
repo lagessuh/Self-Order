@@ -7,6 +7,7 @@ import 'package:self_order/pages/cardapio/produto/produto_list_page.dart';
 import 'package:self_order/pages/carrinho/carrinho_page.dart';
 import 'package:self_order/pages/funcionario/funcionario_list_page.dart';
 import 'package:self_order/pages/home/home_page.dart';
+import 'package:self_order/pages/pedidos/lista_pedidos_manager.dart';
 import 'package:self_order/pages/pedidos/lista_pedidos_page.dart';
 import 'package:self_order/pages/pedidos/pedidos_manager_page.dart';
 import 'package:self_order/pages/user/user_profile_page.dart';
@@ -64,7 +65,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
         title: Text(
           'Cardápio: Faça seu pedido',
           style: TextStyle(color: Colors.white),
@@ -177,8 +178,8 @@ class _MainPageState extends State<MainPage> {
                   ExpansionTile(
                       title: const Text("Gerenciamento do Cardápio",
                           style: TextStyle(color: Colors.white)),
-                      leading: const Icon(Icons.settings,
-                          color: Colors.red), //add icon
+                      leading:
+                          Icon(Icons.settings, color: Colors.red), //add icon
                       childrenPadding:
                           const EdgeInsets.only(left: 60), //children padding
                       children: [
@@ -222,7 +223,7 @@ class _MainPageState extends State<MainPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const CategoriaListPage(),
+                                builder: (context) => const PedidoManagerPage(),
                               ),
                             );
                           },
@@ -232,7 +233,8 @@ class _MainPageState extends State<MainPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const PedidoManagerPage(),
+                                builder: (context) =>
+                                    const ListaPedidosManagerPage(),
                               ),
                             );
                           },
@@ -245,7 +247,7 @@ class _MainPageState extends State<MainPage> {
             )
           : null,
       bottomNavigationBar: NavigationBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
         selectedIndex: _bottomNavIndex,
         onDestinationSelected: (int position) {
           setState(() {

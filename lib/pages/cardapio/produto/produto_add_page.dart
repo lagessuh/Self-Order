@@ -224,7 +224,7 @@ class _ProdutoAddPageState extends State<ProdutoAddPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
         title: const Text(
           'Adicionar Produto',
           style: TextStyle(color: Colors.white),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:self_order/commons/responsive.dart';
 import 'package:self_order/models/cardapio/categoria.dart';
 import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
 
@@ -67,78 +68,101 @@ class _CategoriaEditPageState extends State<CategoriaEditPage> {
     }
   }
 
+  EdgeInsets _getResponsivePadding(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return const EdgeInsets.all(80);
+    } else if (Responsive.isTablet(context)) {
+      return const EdgeInsets.all(70);
+    }
+    return const EdgeInsets.all(40);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text("Editar Categoria"),
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
+        title: const Text("Editar Categoria",
+            style: TextStyle(
+              color: Colors.white,
+            )),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Consumer<CategoriaServices>(
-          builder: (context, categoriaServices, child) {
-            return Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    const Text(
-                      "Editando Categoria",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 2, 32, 3),
-                        fontSize: 28,
-                        fontFamily: 'Lustria',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    _buildTextField(
-                      controller: _tituloController,
-                      label: 'Titulo',
-                      validator: (value) =>
-                          value?.isEmpty ?? true ? 'Campo obrigatório' : null,
-                    ),
-                    const SizedBox(height: 10),
-                    _buildTextField(
-                      controller: _descricaoController,
-                      label: 'Descrição',
-                      validator: (value) =>
-                          value?.isEmpty ?? true ? 'Campo obrigatório' : null,
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: _getResponsivePadding(context),
+          child: Card(
+            margin: const EdgeInsets.all(16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Consumer<CategoriaServices>(
+                builder: (context, categoriaServices, child) {
+                  return Form(
+                    key: _formKey,
+                    child: Column(
                       children: [
-                        ElevatedButton(
-                          onPressed:
-                              _isLoading ? null : () => Navigator.pop(context),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red),
-                          child: const Text("Cancelar"),
+                        const SizedBox(height: 50),
+                        const Text(
+                          "Editando Categoria",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 2, 32, 3),
+                            fontSize: 28,
+                            fontFamily: 'Lustria',
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: _isLoading
-                              ? null
-                              : () => _salvarCategoria(context),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                      color: Colors.white),
-                                )
-                              : const Text("Salvar"),
+                        const SizedBox(height: 30),
+                        _buildTextField(
+                          controller: _tituloController,
+                          label: 'Titulo',
+                          validator: (value) => value?.isEmpty ?? true
+                              ? 'Campo obrigatório'
+                              : null,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildTextField(
+                          controller: _descricaoController,
+                          label: 'Descrição',
+                          validator: (value) => value?.isEmpty ?? true
+                              ? 'Campo obrigatório'
+                              : null,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => Navigator.pop(context),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              child: const Text("Cancelar"),
+                            ),
+                            ElevatedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => _salvarCategoria(context),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white),
+                                    )
+                                  : const Text("Salvar"),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

@@ -176,6 +176,26 @@ class CategoriaServices extends ChangeNotifier {
     )).toList();
   }
 
+  Future<List<Categoria>> getCategoriasFiltrados(String searchText) async {
+    try {
+      Query query = firestore.collection('categorias');
+
+      if (searchText.isNotEmpty) {
+        query = query
+            .where('titulo', isGreaterThanOrEqualTo: searchText)
+            .where('titulo', isLessThanOrEqualTo: '$searchText\uf8ff');
+      }
+
+      QuerySnapshot snapshot = await query.get();
+
+      return snapshot.docs
+          .map((doc) => Categoria.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Erro ao filtrar produtos: $e');
+    }
+  }
+
   // _uploadImage(dynamic imageFile, bool plat) async {
   //   debugPrint("Salvando imagem da categoria");
   //   //chave para persistir a imagem no firebasestorage

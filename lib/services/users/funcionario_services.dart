@@ -536,6 +536,33 @@ class FuncionarioServices extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateFuncionario(FuncionarioModel funcionarioModel) async {
+    try {
+      if (funcionarioModel.id == null || funcionarioModel.id!.isEmpty) {
+        throw Exception("ID do produto inválido");
+      }
+
+      // Validação básica dos dados da categoria
+      if (funcionarioModel.userName!.isEmpty) {
+        throw Exception("Dados da categoria inválidos");
+      }
+
+      final docRef = _collectionRef.doc(funcionarioModel.id);
+
+      // Atualiza o documento no Firestore
+      await docRef.update(funcionarioModel.toMap());
+      debugPrint("Produto atualizado com sucesso: ${funcionarioModel.id}");
+
+      return true; // Sucesso
+    } on FirebaseException catch (e) {
+      debugPrint("Erro ao atualizar funcionario: ${e.code} - ${e.message}");
+      throw Exception("Erro ao atualizar funcionario: ${e.message}");
+    } catch (e) {
+      debugPrint("Erro inesperado ao atualizar funcionario: $e");
+      throw Exception("Erro inesperado: $e");
+    }
+  }
+
   // updateUser(FuncionarioModel funcionario) {
   //   _firestoreRef.update(funcionario.toJson());
   // }

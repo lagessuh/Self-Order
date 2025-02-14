@@ -1613,6 +1613,385 @@
 //   }
 // }
 
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:self_order/commons/responsive.dart';
+// import 'package:self_order/commons/widgets/home_page_categorias.dart';
+// import 'package:self_order/models/cardapio/produto.dart';
+// import 'package:self_order/pages/cardapio/produto/produto_detail_page.dart';
+// import 'package:self_order/services/cardapio/categoria/categoria_services.dart';
+// import 'package:self_order/services/cardapio/produto_services.dart';
+
+// class HomePage extends StatefulWidget {
+//   const HomePage({super.key});
+
+//   @override
+//   State<HomePage> createState() => _HomePageState();
+// }
+
+// class _HomePageState extends State<HomePage> {
+//   String? selectedCategoryId;
+//   ProdutoServices produtoServices = ProdutoServices();
+//   CategoriaServices categoriaServices = CategoriaServices();
+//   List<Produto> produtos = [];
+//   final TextEditingController _searchController = TextEditingController();
+//   bool _isMounted = false;
+//   bool isSearching = false;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _isMounted = true;
+
+//     // Escuta mudanças no campo de texto para ativar a filtragem
+//     _searchController.addListener(_onSearchTextChanged);
+//   }
+
+//   @override
+//   void dispose() {
+//     _isMounted = false;
+//     _searchController.dispose();
+//     super.dispose();
+//   }
+
+//   void _onSearchTextChanged() {
+//     setState(() {
+//       isSearching = _searchController.text.isNotEmpty;
+//     });
+//     _filtrarItens();
+//   }
+
+//   Future<void> _filtrarItens() async {
+//     try {
+//       final result = await produtoServices.getProdutosFiltrados(
+//         _searchController.text,
+//       );
+//       if (_isMounted) {
+//         setState(() {
+//           produtos = result;
+//         });
+//       }
+//     } catch (e) {
+//       if (kDebugMode) {
+//         print('Erro ao filtrar itens: $e');
+//       }
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     List<String> images = [
+//       'hamburgueria.jpg',
+//     ];
+
+//     return Scaffold(
+//       body: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.only(top: 30.0, bottom: 30),
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     'FullStack Burger',
+//                     style: GoogleFonts.roboto(
+//                       fontSize: 25,
+//                       fontWeight: FontWeight.w600,
+//                       color: const Color.fromARGB(255, 2, 33, 3),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Padding(
+//               padding: const EdgeInsets.only(
+//                 left: 40.0,
+//                 right: 40,
+//                 bottom: 25,
+//               ),
+//               child: TextFormField(
+//                 controller: _searchController,
+//                 decoration: const InputDecoration(
+//                     suffixIcon: Icon(Icons.search),
+//                     label: Text("Procure por um produto"),
+//                     enabledBorder: OutlineInputBorder(
+//                       borderSide: BorderSide(width: 1.3),
+//                     ),
+//                     focusedBorder:
+//                         OutlineInputBorder(borderSide: BorderSide(width: 1.5))),
+//               ),
+//             ),
+//             ConstrainedBox(
+//               constraints: BoxConstraints(
+//                 maxWidth: MediaQuery.sizeOf(context).width - 60,
+//                 maxHeight: 200,
+//               ),
+//               child: CarouselView(
+//                 itemExtent: 400,
+//                 itemSnapping: true,
+//                 // shrinkExtent: 150,
+//                 padding: const EdgeInsets.all(5),
+//                 children: List.generate(
+//                   images.length,
+//                   (index) => Image.asset(
+//                     "assets/banners/${images[index]}",
+//                     fit: BoxFit.cover,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             //-- Categories --//
+//             HomePageCategorias(
+//               onCategorySelected: (categoryId) {
+//                 setState(() {
+//                   selectedCategoryId = categoryId;
+//                 });
+//               },
+//               selectedCategoryId: selectedCategoryId,
+//             ),
+//             const Padding(
+//               padding: EdgeInsets.only(top: 10.0),
+//               child: Center(
+//                   child: Column(
+//                 children: [
+//                   SizedBox(
+//                     width: 100,
+//                     child: Divider(
+//                       color: Color.fromARGB(255, 1, 24, 2),
+//                     ),
+//                   )
+//                 ],
+//               )),
+//             ),
+//             StreamBuilder(
+//               stream: isSearching
+//                   ? null // Evita que o StreamBuilder use dados enquanto estiver pesquisando
+//                   : (selectedCategoryId == null
+//                       ? produtoServices.getAllProdutos()
+//                       : produtoServices
+//                           .getProdutosPorCategoria(selectedCategoryId!)),
+//               // stream: selectedCategoryId == null
+//               //     ? produtoServices.getAllProdutos()
+//               //     : produtoServices
+//               //         .getProdutosPorCategoria(selectedCategoryId!),
+//               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//                 if (isSearching) {
+//                   return _buildProductGrid(); // Usa os produtos filtrados
+//                 }
+//                 if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+//                   return StreamBuilder(
+//                       stream: selectedCategoryId != null
+//                           ? FirebaseFirestore.instance
+//                               .collection('categorias')
+//                               .doc(selectedCategoryId)
+//                               .snapshots()
+//                           : null,
+//                       builder: (context,
+//                           AsyncSnapshot<DocumentSnapshot> categoriaSnapshot) {
+//                         String mensagem = 'Nenhum produto encontrado';
+//                         if (categoriaSnapshot.hasData &&
+//                             categoriaSnapshot.data != null &&
+//                             categoriaSnapshot.data!.exists) {
+//                           try {
+//                             String categoriaNome =
+//                                 categoriaSnapshot.data!.get('titulo') as String;
+//                             mensagem =
+//                                 'Nenhum produto encontrado para a categoria "$categoriaNome"';
+//                           } catch (e) {
+//                             // Em caso de erro ao acessar o campo 'titulo'
+//                             mensagem =
+//                                 'Nenhum produto encontrado para esta categoria';
+//                           }
+//                         } else if (categoriaSnapshot.hasError) {
+//                           mensagem =
+//                               'Nenhum produto encontrado para esta categoria';
+//                         }
+
+//                         return Center(
+//                           child: Padding(
+//                             padding: const EdgeInsets.all(20.0),
+//                             child: Text(
+//                               mensagem,
+//                               style: const TextStyle(
+//                                 fontSize: 16,
+//                                 color: Colors.black54,
+//                               ),
+//                               textAlign: TextAlign.center,
+//                             ),
+//                           ),
+//                         );
+//                       });
+//                 }
+
+//                 if (snapshot.hasData) {
+//                   List<DocumentSnapshot> docSnap = snapshot.data!.docs;
+//                   return Padding(
+//                     padding: const EdgeInsets.only(
+//                       bottom: 30.0,
+//                       top: 30,
+//                       left: 20,
+//                       right: 20,
+//                     ),
+//                     child: GridView.builder(
+//                         shrinkWrap: true,
+//                         itemCount: snapshot.data!.docs.length,
+//                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                           crossAxisSpacing: 10,
+//                           crossAxisCount: Responsive.isDesktop(context) ? 4 : 3,
+//                           childAspectRatio: .5,
+//                           mainAxisExtent: Responsive.isDesktop(context)
+//                               ? MediaQuery.of(context).size.height * .5
+//                               : MediaQuery.of(context).size.height * .3,
+//                         ),
+//                         itemBuilder: (context, index) {
+//                           return InkWell(
+//                             onTap: () {
+//                               Produto produto = Produto();
+//                               produto.id = snapshot.data!.docs[index].id;
+//                               produto.nome =
+//                                   snapshot.data!.docs[index].get('nome');
+//                               produto.marca =
+//                                   snapshot.data!.docs[index].get('marca');
+//                               produto.descricao =
+//                                   snapshot.data!.docs[index].get('descricao');
+//                               produto.preco = double.parse(snapshot
+//                                   .data!.docs[index]
+//                                   .get('preco')
+//                                   .toString());
+//                               produto.image =
+//                                   snapshot.data!.docs[index].get('image');
+
+//                               Navigator.of(context).push(MaterialPageRoute(
+//                                   builder: (context) =>
+//                                       ProdutoDetailPage(produto: produto)));
+//                             },
+//                             child: Padding(
+//                               padding:
+//                                   const EdgeInsets.symmetric(horizontal: 10.0),
+//                               child: Column(
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   Image.network(
+//                                     docSnap[index].get('image'),
+//                                     height: Responsive.isDesktop(context)
+//                                         ? MediaQuery.of(context).size.height *
+//                                             .3
+//                                         : MediaQuery.of(context).size.height *
+//                                             .2,
+//                                     width: Responsive.isDesktop(context)
+//                                         ? MediaQuery.of(context).size.height *
+//                                             .3
+//                                         : MediaQuery.of(context).size.height *
+//                                             .2,
+//                                     scale: 1,
+//                                   ),
+//                                   SizedBox(
+//                                     width: 120.0,
+//                                     child: Text(
+//                                       docSnap[index].get('nome'),
+//                                       maxLines: 2,
+//                                       overflow: TextOverflow.ellipsis,
+//                                       softWrap: false,
+//                                       style: const TextStyle(
+//                                           color: Colors.black,
+//                                           fontWeight: FontWeight.bold,
+//                                           fontSize: 12.0),
+//                                     ),
+//                                   ),
+//                                   Text(
+//                                     'R\$ ${docSnap[index].get('preco').toString()}',
+//                                     style: const TextStyle(
+//                                         color: Color.fromARGB(255, 2, 33, 3),
+//                                         fontWeight: FontWeight.bold),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           );
+//                         }),
+//                   );
+//                 } else {
+//                   return const Center(
+//                     child: CircularProgressIndicator(),
+//                   );
+//                 }
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildProductGrid() {
+//     return Padding(
+//       padding:
+//           const EdgeInsets.only(bottom: 30.0, top: 30, left: 20, right: 20),
+//       child: GridView.builder(
+//         shrinkWrap: true,
+//         itemCount: produtos.length,
+//         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//           crossAxisSpacing: 10,
+//           crossAxisCount: Responsive.isDesktop(context) ? 4 : 3,
+//           childAspectRatio: .5,
+//           mainAxisExtent: Responsive.isDesktop(context)
+//               ? MediaQuery.of(context).size.height * .5
+//               : MediaQuery.of(context).size.height * .3,
+//         ),
+//         itemBuilder: (context, index) {
+//           final produto = produtos[index];
+//           return InkWell(
+//             onTap: () {
+//               Navigator.of(context).push(MaterialPageRoute(
+//                 builder: (context) => ProdutoDetailPage(produto: produto),
+//               ));
+//             },
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Image.network(
+//                     produto.image ?? '',
+//                     height: Responsive.isDesktop(context)
+//                         ? MediaQuery.of(context).size.height * .3
+//                         : MediaQuery.of(context).size.height * .2,
+//                     width: Responsive.isDesktop(context)
+//                         ? MediaQuery.of(context).size.height * .3
+//                         : MediaQuery.of(context).size.height * .2,
+//                     scale: 1,
+//                   ),
+//                   SizedBox(
+//                     width: 120.0,
+//                     child: Text(
+//                       produto.nome ?? '',
+//                       maxLines: 2,
+//                       overflow: TextOverflow.ellipsis,
+//                       softWrap: false,
+//                       style: const TextStyle(
+//                           color: Colors.black,
+//                           fontWeight: FontWeight.bold,
+//                           fontSize: 12.0),
+//                     ),
+//                   ),
+//                   Text(
+//                     'R\$ ${produto.preco?.toStringAsFixed(2) ?? ''}',
+//                     style: const TextStyle(
+//                         color: Color.fromARGB(255, 2, 33, 3),
+//                         fontWeight: FontWeight.bold),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1644,8 +2023,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _isMounted = true;
-
-    // Escuta mudanças no campo de texto para ativar a filtragem
     _searchController.addListener(_onSearchTextChanged);
   }
 
@@ -1665,9 +2042,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _filtrarItens() async {
     try {
-      final result = await produtoServices.getProdutosFiltrados(
-        _searchController.text,
-      );
+      final result =
+          await produtoServices.getProdutosFiltrados(_searchController.text);
       if (_isMounted) {
         setState(() {
           produtos = result;
@@ -1682,242 +2058,226 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> images = [
-      'hamburgueria.jpg',
-    ];
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0, bottom: 30),
-              child: Column(
-                children: [
-                  Text(
-                    'FullStack Burger',
-                    style: GoogleFonts.roboto(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w600,
-                      color: const Color.fromARGB(255, 2, 33, 3),
-                    ),
-                  ),
-                ],
+      body: CustomScrollView(
+        slivers: [
+          // App Bar com título e busca
+          SliverAppBar(
+            expandedHeight: 100,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'FullStack Burger',
+                style: GoogleFonts.roboto(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 40.0,
-                right: 40,
-                bottom: 25,
-              ),
-              child: TextFormField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                    suffixIcon: Icon(Icons.search),
-                    label: Text("Procure por um produto"),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 1.3),
-                    ),
-                    focusedBorder:
-                        OutlineInputBorder(borderSide: BorderSide(width: 1.5))),
-              ),
-            ),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.sizeOf(context).width - 60,
-                maxHeight: 200,
-              ),
-              child: CarouselView(
-                itemExtent: 400,
-                itemSnapping: true,
-                // shrinkExtent: 150,
-                padding: const EdgeInsets.all(5),
-                children: List.generate(
-                  images.length,
-                  (index) => Image.asset(
-                    "assets/banners/${images[index]}",
-                    fit: BoxFit.cover,
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromARGB(255, 0, 0, 0),
+                      Color.fromARGB(255, 218, 66, 66),
+                    ],
                   ),
                 ),
               ),
             ),
-            //-- Categories --//
-            HomePageCategorias(
-              onCategorySelected: (categoryId) {
-                setState(() {
-                  selectedCategoryId = categoryId;
-                });
-              },
-              selectedCategoryId: selectedCategoryId,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Center(
-                  child: Column(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Divider(
-                      color: Color.fromARGB(255, 1, 24, 2),
+          ),
+
+          // Barra de pesquisa
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Procure por um produto",
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      border: InputBorder.none,
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                _onSearchTextChanged();
+                              },
+                            )
+                          : null,
                     ),
-                  )
-                ],
-              )),
+                  ),
+                ),
+              ),
             ),
-            StreamBuilder(
-              stream: isSearching
-                  ? null // Evita que o StreamBuilder use dados enquanto estiver pesquisando
-                  : (selectedCategoryId == null
+          ),
+
+          // Banner Carousel
+          SliverToBoxAdapter(
+            child: Container(
+              height: 200,
+              margin: const EdgeInsets.symmetric(vertical: 16),
+              child: CarouselView(
+                itemExtent: MediaQuery.of(context).size.width,
+                itemSnapping: true,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      "assets/banners/hamburgueria.jpg",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Categorias
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: HomePageCategorias(
+                onCategorySelected: (categoryId) {
+                  setState(() {
+                    selectedCategoryId = categoryId;
+                  });
+                },
+                selectedCategoryId: selectedCategoryId,
+              ),
+            ),
+          ),
+
+          // Grid de Produtos
+          isSearching
+              ? SliverPadding(
+                  padding: const EdgeInsets.all(16.0),
+                  sliver: _buildProductGridSliver(produtos),
+                )
+              : StreamBuilder(
+                  stream: selectedCategoryId == null
                       ? produtoServices.getAllProdutos()
                       : produtoServices
-                          .getProdutosPorCategoria(selectedCategoryId!)),
-              // stream: selectedCategoryId == null
-              //     ? produtoServices.getAllProdutos()
-              //     : produtoServices
-              //         .getProdutosPorCategoria(selectedCategoryId!),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (isSearching) {
-                  return _buildProductGrid(); // Usa os produtos filtrados
-                }
-                if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-                  return StreamBuilder(
-                      stream: selectedCategoryId != null
-                          ? FirebaseFirestore.instance
-                              .collection('categorias')
-                              .doc(selectedCategoryId)
-                              .snapshots()
-                          : null,
-                      builder: (context,
-                          AsyncSnapshot<DocumentSnapshot> categoriaSnapshot) {
-                        String mensagem = 'Nenhum produto encontrado';
-                        if (categoriaSnapshot.hasData &&
-                            categoriaSnapshot.data != null &&
-                            categoriaSnapshot.data!.exists) {
-                          try {
-                            String categoriaNome =
-                                categoriaSnapshot.data!.get('titulo') as String;
-                            mensagem =
-                                'Nenhum produto encontrado para a categoria "$categoriaNome"';
-                          } catch (e) {
-                            // Em caso de erro ao acessar o campo 'titulo'
-                            mensagem =
-                                'Nenhum produto encontrado para esta categoria';
-                          }
-                        } else if (categoriaSnapshot.hasError) {
-                          mensagem =
-                              'Nenhum produto encontrado para esta categoria';
-                        }
+                          .getProdutosPorCategoria(selectedCategoryId!),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const SliverFillRemaining(
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
 
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Text(
-                              mensagem,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black54,
-                              ),
-                              textAlign: TextAlign.center,
+                    if (snapshot.data!.docs.isEmpty) {
+                      return SliverFillRemaining(
+                        child: Center(
+                          child: Text(
+                            'Nenhum produto encontrado',
+                            style: GoogleFonts.roboto(
+                              fontSize: 16,
+                              color: Colors.grey[600],
                             ),
                           ),
-                        );
-                      });
-                }
-
-                if (snapshot.hasData) {
-                  List<DocumentSnapshot> docSnap = snapshot.data!.docs;
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 30.0,
-                      top: 30,
-                      left: 20,
-                      right: 20,
-                    ),
-                    child: GridView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.docs.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing: 10,
-                          crossAxisCount: Responsive.isDesktop(context) ? 4 : 3,
-                          childAspectRatio: .5,
-                          mainAxisExtent: Responsive.isDesktop(context)
-                              ? MediaQuery.of(context).size.height * .5
-                              : MediaQuery.of(context).size.height * .3,
                         ),
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Produto produto = Produto();
-                              produto.id = snapshot.data!.docs[index].id;
-                              produto.nome =
-                                  snapshot.data!.docs[index].get('nome');
-                              produto.marca =
-                                  snapshot.data!.docs[index].get('marca');
-                              produto.descricao =
-                                  snapshot.data!.docs[index].get('descricao');
-                              produto.preco = double.parse(snapshot
-                                  .data!.docs[index]
-                                  .get('preco')
-                                  .toString());
-                              produto.image =
-                                  snapshot.data!.docs[index].get('image');
+                      );
+                    }
 
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProdutoDetailPage(produto: produto)));
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.network(
-                                    docSnap[index].get('image'),
-                                    height: Responsive.isDesktop(context)
-                                        ? MediaQuery.of(context).size.height *
-                                            .3
-                                        : MediaQuery.of(context).size.height *
-                                            .2,
-                                    width: Responsive.isDesktop(context)
-                                        ? MediaQuery.of(context).size.height *
-                                            .3
-                                        : MediaQuery.of(context).size.height *
-                                            .2,
-                                    scale: 1,
-                                  ),
-                                  SizedBox(
-                                    width: 120.0,
-                                    child: Text(
-                                      docSnap[index].get('nome'),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: false,
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12.0),
-                                    ),
-                                  ),
-                                  Text(
-                                    'R\$ ${docSnap[index].get('preco').toString()}',
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(255, 2, 33, 3),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
+                    return SliverPadding(
+                      padding: const EdgeInsets.all(16.0),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: Responsive.isDesktop(context) ? 4 : 2,
+                          childAspectRatio: 0.75,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            DocumentSnapshot doc = snapshot.data!.docs[index];
+                            return _buildProductCard(doc);
+                          },
+                          childCount: snapshot.data!.docs.length,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductCard(DocumentSnapshot doc) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: () {
+          Produto produto = Produto()
+            ..id = doc.id
+            ..nome = doc.get('nome')
+            ..marca = doc.get('marca')
+            ..descricao = doc.get('descricao')
+            ..preco = double.parse(doc.get('preco').toString())
+            ..image = doc.get('image');
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ProdutoDetailPage(produto: produto),
+            ),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.network(
+                  doc.get('image'),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    doc.get('nome'),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.roboto(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'R\$ ${doc.get('preco').toString()}',
+                    style: GoogleFonts.roboto(
+                      color: const Color(0xFF1B5E20),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -1925,68 +2285,80 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildProductGrid() {
-    return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 30.0, top: 30, left: 20, right: 20),
-      child: GridView.builder(
-        shrinkWrap: true,
-        itemCount: produtos.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisSpacing: 10,
-          crossAxisCount: Responsive.isDesktop(context) ? 4 : 3,
-          childAspectRatio: .5,
-          mainAxisExtent: Responsive.isDesktop(context)
-              ? MediaQuery.of(context).size.height * .5
-              : MediaQuery.of(context).size.height * .3,
-        ),
-        itemBuilder: (context, index) {
+  SliverGrid _buildProductGridSliver(List<Produto> produtos) {
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: Responsive.isDesktop(context) ? 4 : 2,
+        childAspectRatio: 0.75,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
           final produto = produtos[index];
-          return InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProdutoDetailPage(produto: produto),
-              ));
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          return _buildProductCardFromProduto(produto);
+        },
+        childCount: produtos.length,
+      ),
+    );
+  }
+
+  Widget _buildProductCardFromProduto(Produto produto) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ProdutoDetailPage(produto: produto),
+            ),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.network(
+                  produto.image ?? '',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.network(
-                    produto.image ?? '',
-                    height: Responsive.isDesktop(context)
-                        ? MediaQuery.of(context).size.height * .3
-                        : MediaQuery.of(context).size.height * .2,
-                    width: Responsive.isDesktop(context)
-                        ? MediaQuery.of(context).size.height * .3
-                        : MediaQuery.of(context).size.height * .2,
-                    scale: 1,
-                  ),
-                  SizedBox(
-                    width: 120.0,
-                    child: Text(
-                      produto.nome ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12.0),
+                  Text(
+                    produto.nome ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.roboto(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     'R\$ ${produto.preco?.toStringAsFixed(2) ?? ''}',
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 2, 33, 3),
-                        fontWeight: FontWeight.bold),
+                    style: GoogleFonts.roboto(
+                      color: const Color(0xFF1B5E20),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

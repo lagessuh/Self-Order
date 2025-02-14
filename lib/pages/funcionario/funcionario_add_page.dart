@@ -1,3 +1,4 @@
+import 'package:self_order/commons/responsive.dart';
 import 'package:self_order/models/users/funcionario.dart';
 import 'package:self_order/services/users/funcionario_services.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +21,21 @@ class _FuncionarioAddPageState extends State<FuncionarioAddPage> {
   final TextEditingController _matriculaController = TextEditingController();
   final TextEditingController _funcaoController = TextEditingController();
 
+  EdgeInsets _getResponsivePadding(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return const EdgeInsets.all(80);
+    } else if (Responsive.isTablet(context)) {
+      return const EdgeInsets.all(70);
+    }
+    return const EdgeInsets.all(40);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 0, 0, 0),
       appBar: AppBar(
-        backgroundColor: Colors.red, // Cor do AppBar
+        backgroundColor: Color.fromARGB(255, 255, 0, 0), // Cor do AppBar
         title: const Text(
           'Criar Perfil de Funcionário',
           style: TextStyle(
@@ -35,16 +45,17 @@ class _FuncionarioAddPageState extends State<FuncionarioAddPage> {
         centerTitle: true,
       ),
       body: Center(
-        child: Container(
-          color: Colors.white,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Consumer<FuncionarioServices>(
-                  builder: (context, funcionarioServices, child) {
-                    return Column(
+        child: SingleChildScrollView(
+          padding: _getResponsivePadding(context),
+          child: Form(
+            key: _formKey,
+            child: Consumer<FuncionarioServices>(
+              builder: (context, funcionarioServices, child) {
+                return Card(
+                  margin: const EdgeInsets.all(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextFormField(
@@ -185,10 +196,10 @@ class _FuncionarioAddPageState extends State<FuncionarioAddPage> {
                           child: const Text('Cadastrar Funcionário'),
                         ),
                       ],
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),

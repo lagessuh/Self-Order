@@ -33,6 +33,14 @@ class Categoria {
     };
   }
 
+  factory Categoria.fromMap(Map<String, dynamic> map) {
+    return Categoria(
+      id: map['id']?.toString(),
+      titulo: map['titulo']?.toString(),
+      descricao: map['descricao']?.toString(),
+    );
+  }
+
   static fromSnapShot(QueryDocumentSnapshot<Map<String, dynamic>> doc) {}
 
   static fromDocument(DocumentSnapshot<Object?> e) {}
