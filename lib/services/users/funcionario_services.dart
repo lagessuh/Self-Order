@@ -235,13 +235,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:self_order/models/users/funcionario.dart';
+import 'package:self_order/models/users/users_access.dart';
 import 'package:self_order/services/users/users_access_services.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FuncionarioServices extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FuncionarioModel? funcionarioModel;
   final UsersAccessServices _accessServices = UsersAccessServices();
+  UsersAccess? usersAccess;
 
   DocumentReference get _firestoreRef =>
       _firestore.doc('funcionarios/${funcionarioModel!.id}');
@@ -280,73 +284,193 @@ class FuncionarioServices extends ChangeNotifier {
     required Function onFail,
   }) async {
     try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: funcionarioModel.email!,
-        password: password,
+      // 🔹 1. Sua chave da API do Firebase
+      const String apiKey = "AIzaSyAvL70V85C4ripLXm7xCWpxH7xkXkq_eno";
+
+      // 🔹 2. Endpoint para criar usuário via API REST
+      const String url =
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey";
+
+      // 🔹 3. Requisição para criar usuário sem fazer login
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": funcionarioModel.email,
+          "password": password,
+          "returnSecureToken": false, // 🔥 Isso impede o login automático
+        }),
       );
 
-      User user = userCredential.user!;
-      funcionarioModel.id = user.uid;
+      final responseData = jsonDecode(response.body);
 
-      // Salva os dados do usuário no Firestore
-      await _firestore
-          .collection('funcionarios')
-          .doc(user.uid)
-          .set(funcionarioModel.toMap());
+      if (response.statusCode == 200) {
+        // 🔹 4. Usuário criado com sucesso, pega o UID
+        String userId = responseData["localId"];
+        funcionarioModel.id = userId;
 
-      // Fazer logout logo após criar o usuário
-      await _auth.signOut();
+        // 🔹 5. Salva os dados do funcionário no Firestore
+        await _firestore
+            .collection('funcionarios')
+            .doc(userId)
+            .set(funcionarioModel.toMap());
 
-      onSuccess();
-      return true;
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'email-already-in-use':
-          if (kDebugMode) {
-            print('Erro: Este email já está cadastrado');
-          }
-          onFail('Este email já está cadastrado');
-          break;
-        case 'invalid-email':
-          if (kDebugMode) {
-            print('Erro: O email informado está com formato inválido');
-          }
-          onFail('O email informado está com formato inválido');
-          break;
-        case 'weak-password':
-          if (kDebugMode) {
-            print('Erro: A senha precisa ter no mínimo 6 caracteres');
-          }
-          onFail('A senha precisa ter no mínimo 6 caracteres');
-          break;
-        case 'user-disabled':
-          if (kDebugMode) {
-            print('Erro: Este usuário foi desativado');
-          }
-          onFail('Este usuário foi desativado');
-          break;
-        case 'operation-not-allowed':
-          if (kDebugMode) {
-            print('Erro: A operação não é permitida');
-          }
-          onFail('A operação não é permitida');
-          break;
-        default:
-          if (kDebugMode) {
-            print('Erro ao criar conta: ${e.message}');
-          }
-          onFail('Erro ao criar conta: ${e.message}');
+        onSuccess();
+        return true;
+      } else {
+        onFail(responseData["error"]["message"]);
+        return false;
       }
-      return false;
     } catch (e) {
-      if (kDebugMode) {
-        print('Erro inesperado ao criar conta: $e');
-      }
-      onFail('Erro inesperado ao criar conta: $e');
+      onFail("Erro inesperado ao criar conta: $e");
       return false;
     }
   }
+
+  // Future<bool> signUp2({
+  //   required FuncionarioModel funcionarioModel,
+  //   required String password,
+  //   required Function onSuccess,
+  //   required Function onFail,
+  // }) async {
+  //   try {
+  //     UserCredential userCredential =
+  //         await _auth.createUserWithEmailAndPassword(
+  //       email: funcionarioModel.email!,
+  //       password: password,
+  //     );
+
+  //     User user = userCredential.user!;
+  //     funcionarioModel.id = user.uid;
+
+  //     // ✅ Certifique-se de converter UsersAccess corretamente
+  //     Map<String, dynamic> funcionarioMap = funcionarioModel.toMap();
+
+  //     if (funcionarioModel.usersAccess != null) {
+  //       funcionarioMap['usersAccess'] = funcionarioModel.usersAccess!.toMap();
+  //     }
+
+  //     // Salva os dados do usuário no Firestore
+  //     await _firestore
+  //         .collection('funcionarios')
+  //         .doc(user.uid)
+  //         .set(funcionarioMap);
+
+  //     // Fazer logout logo após criar o usuário
+  //     //await _auth.signOut();
+
+  //     onSuccess();
+  //     return true;
+  //   } on FirebaseAuthException catch (e) {
+  //     switch (e.code) {
+  //       case 'email-already-in-use':
+  //         if (kDebugMode) print('Erro: Este email já está cadastrado');
+  //         onFail('Este email já está cadastrado');
+  //         break;
+  //       case 'invalid-email':
+  //         if (kDebugMode)
+  //           print('Erro: O email informado está com formato inválido');
+  //         onFail('O email informado está com formato inválido');
+  //         break;
+  //       case 'weak-password':
+  //         if (kDebugMode)
+  //           print('Erro: A senha precisa ter no mínimo 6 caracteres');
+  //         onFail('A senha precisa ter no mínimo 6 caracteres');
+  //         break;
+  //       case 'user-disabled':
+  //         if (kDebugMode) print('Erro: Este usuário foi desativado');
+  //         onFail('Este usuário foi desativado');
+  //         break;
+  //       case 'operation-not-allowed':
+  //         if (kDebugMode) print('Erro: A operação não é permitida');
+  //         onFail('A operação não é permitida');
+  //         break;
+  //       default:
+  //         if (kDebugMode) print('Erro ao criar conta: ${e.message}');
+  //         onFail('Erro ao criar conta: ${e.message}');
+  //     }
+  //     return false;
+  //   } catch (e) {
+  //     if (kDebugMode) print('Erro inesperado ao criar conta: $e');
+  //     onFail('Erro inesperado ao criar conta: $e');
+  //     return false;
+  //   }
+  // }
+
+  // Future<bool> signUp2({
+  //   required FuncionarioModel funcionarioModel,
+  //   required String password,
+  //   required Function onSuccess,
+  //   required Function onFail,
+  // }) async {
+  //   try {
+  //     UserCredential userCredential =
+  //         await _auth.createUserWithEmailAndPassword(
+  //       email: funcionarioModel.email!,
+  //       password: password,
+  //     );
+
+  //     User user = userCredential.user!;
+  //     funcionarioModel.id = user.uid;
+
+  //     // Salva os dados do usuário no Firestore
+  //     await _firestore
+  //         .collection('funcionarios')
+  //         .doc(user.uid)
+  //         .set(funcionarioModel.toMap());
+
+  //     // Fazer logout logo após criar o usuário
+  //     await _auth.signOut();
+
+  //     onSuccess();
+  //     return true;
+  //   } on FirebaseAuthException catch (e) {
+  //     switch (e.code) {
+  //       case 'email-already-in-use':
+  //         if (kDebugMode) {
+  //           print('Erro: Este email já está cadastrado');
+  //         }
+  //         onFail('Este email já está cadastrado');
+  //         break;
+  //       case 'invalid-email':
+  //         if (kDebugMode) {
+  //           print('Erro: O email informado está com formato inválido');
+  //         }
+  //         onFail('O email informado está com formato inválido');
+  //         break;
+  //       case 'weak-password':
+  //         if (kDebugMode) {
+  //           print('Erro: A senha precisa ter no mínimo 6 caracteres');
+  //         }
+  //         onFail('A senha precisa ter no mínimo 6 caracteres');
+  //         break;
+  //       case 'user-disabled':
+  //         if (kDebugMode) {
+  //           print('Erro: Este usuário foi desativado');
+  //         }
+  //         onFail('Este usuário foi desativado');
+  //         break;
+  //       case 'operation-not-allowed':
+  //         if (kDebugMode) {
+  //           print('Erro: A operação não é permitida');
+  //         }
+  //         onFail('A operação não é permitida');
+  //         break;
+  //       default:
+  //         if (kDebugMode) {
+  //           print('Erro ao criar conta: ${e.message}');
+  //         }
+  //         onFail('Erro ao criar conta: ${e.message}');
+  //     }
+  //     return false;
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('Erro inesperado ao criar conta: $e');
+  //     }
+  //     onFail('Erro inesperado ao criar conta: $e');
+  //     return false;
+  //   }
+  // }
 
   Future<bool> saveData() async {
     try {

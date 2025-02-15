@@ -43,6 +43,18 @@ class FuncionarioModel {
     );
   }
 
+  // Map<String, dynamic> toMap() {
+  //   return <String, dynamic>{
+  //     'id': id,
+  //     'userName': userName,
+  //     'email': email,
+  //     'password': password,
+  //     'matricula': matricula,
+  //     'funcao': funcao,
+  //     'usersAccess': usersAccess,
+  //   };
+  // }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -51,7 +63,7 @@ class FuncionarioModel {
       'password': password,
       'matricula': matricula,
       'funcao': funcao,
-      'usersAccess': usersAccess,
+      'usersAccess': usersAccess?.toMap(),
     };
   }
 
