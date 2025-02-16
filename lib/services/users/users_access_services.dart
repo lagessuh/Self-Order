@@ -65,18 +65,20 @@ class UsersAccessServices extends ChangeNotifier {
   // Refined access control mapping with more specific roles and permissions
   final Map<String, List<String>> _rolePermissions = {
     'admin': [
-      'manage_users',
+      //'manage_users',
       'manage_funcionarios',
-      'view_reports',
+      //'view_reports',
       'manage_orders',
       'manage_menu',
-      'manage_settings'
+      'view_all_order_history'
+      //'manage_settings'
     ],
     'gerente': [
-      'view_reports',
+      //'view_reports',
       'manage_orders',
       'manage_menu',
-      'view_funcionarios'
+      //'view_funcionarios',
+      'view_all_order_history'
     ],
     'funcionario': ['manage_orders', 'view_menu'],
     'user': ['place_order', 'view_menu', 'view_order_history'],
@@ -139,19 +141,48 @@ class UsersAccessServices extends ChangeNotifier {
         return;
       }
 
-      bool accessInvalid = false;
+      // bool accessInvalid = false;
 
-      if (clienteModel?.usersAccess != null) {
-        accessInvalid = isValidAccess(clienteModel!.usersAccess!);
-      } else if (funcionarioModel?.usersAccess != null) {
-        accessInvalid = isValidAccess(funcionarioModel!.usersAccess!);
+      // if (clienteModel?.usersAccess != null) {
+      //   accessInvalid = isValidAccess(clienteModel!.usersAccess!);
+      // } else if (funcionarioModel?.usersAccess != null) {
+      //   accessInvalid = isValidAccess(funcionarioModel!.usersAccess!);
+      // }
+
+      // if (accessInvalid) {
+      //   await _auth.signOut();
+      //   onFail('Acesso inválido ou desativado');
+      //   return;
+      // }
+      // bool accessValid = false;
+
+      // if (clienteModel?.usersAccess != null) {
+      //   accessValid = isValidAccess(clienteModel!.usersAccess!);
+      // } else if (funcionarioModel?.usersAccess != null) {
+      //   accessValid = isValidAccess(funcionarioModel!.usersAccess!);
+      // }
+
+      bool accessValid = false;
+
+      if (clienteModel != null) {
+        // Clientes sempre têm acesso permitido
+        accessValid = true;
+      } else if (funcionarioModel != null &&
+          funcionarioModel!.usersAccess != null) {
+        // Funcionários passam pela validação de acesso
+        accessValid = isValidAccess(funcionarioModel!.usersAccess!);
       }
 
-      if (accessInvalid) {
+      if (!accessValid) {
         await _auth.signOut();
         onFail('Acesso inválido ou desativado');
         return;
       }
+      debugPrint("Status do acesso: ${accessValid ? 'válido' : 'inválido'}");
+      debugPrint(
+          "Tipo de usuário: ${clienteModel?.usersAccess?.tipoUsuario ?? funcionarioModel?.usersAccess?.tipoUsuario}");
+      debugPrint(
+          "Está ativo? ${clienteModel?.usersAccess?.isActive ?? funcionarioModel?.usersAccess?.isActive}");
 
       try {
         if (clienteModel?.usersAccess != null) {

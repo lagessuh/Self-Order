@@ -243,8 +243,10 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
                                 border: Border(
                                   bottom: BorderSide(
                                     color: widget.selectedCategoryId == null
-                                        ? Colors.black
-                                        : Colors.transparent,
+                                        ? const Color.fromARGB(
+                                            255, 255, 255, 255)
+                                        : const Color.fromARGB(
+                                            54, 255, 255, 255),
                                     width: 2.0,
                                   ),
                                 ),
@@ -252,7 +254,7 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
                               child: const Text(
                                 "Todos",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Color.fromARGB(255, 255, 255, 255),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12.0,
                                 ),
@@ -283,8 +285,8 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
                               border: Border(
                                 bottom: BorderSide(
                                   color: widget.selectedCategoryId == categoryId
-                                      ? Colors.black
-                                      : Colors.transparent,
+                                      ? const Color.fromARGB(255, 255, 255, 255)
+                                      : const Color.fromARGB(62, 255, 255, 255),
                                   width: 2.0,
                                 ),
                               ),
@@ -295,7 +297,7 @@ class _HomePageCategoriasState extends State<HomePageCategorias> {
                               overflow: TextOverflow.ellipsis,
                               softWrap: false,
                               style: const TextStyle(
-                                color: Colors.black,
+                                color: Color.fromARGB(255, 255, 255, 255),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12.0,
                               ),

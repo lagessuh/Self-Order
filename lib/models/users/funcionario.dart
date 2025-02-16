@@ -75,7 +75,8 @@ class FuncionarioModel {
       'password': password,
       'matricula': matricula,
       'funcao': funcao,
-      'usersAccess': usersAccess,
+      'usersAccess': usersAccess?.toMap(),
+      //'usersAccess': usersAccess,
     };
   }
 
@@ -99,7 +100,13 @@ class FuncionarioModel {
     email = doc.get('email');
     matricula = doc.get('matricula');
     funcao = doc.get('funcao');
-    usersAccess = doc.get('usersAccess');
+    final data = doc.data() as Map<String, dynamic>?; // Converte data para Map
+    usersAccess = (data != null &&
+            data.containsKey('usersAccess') &&
+            data['usersAccess'] != null)
+        ? UsersAccess.fromMap(data['usersAccess'])
+        : null;
+    //usersAccess = doc.get('usersAccess');
   }
 
   //String toJson() => json.encode(toMap());

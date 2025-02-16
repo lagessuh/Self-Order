@@ -284,32 +284,33 @@ class FuncionarioServices extends ChangeNotifier {
     required Function onFail,
   }) async {
     try {
-      // 🔹 1. Sua chave da API do Firebase
       const String apiKey = "AIzaSyAvL70V85C4ripLXm7xCWpxH7xkXkq_eno";
-
-      // 🔹 2. Endpoint para criar usuário via API REST
       const String url =
           "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey";
 
-      // 🔹 3. Requisição para criar usuário sem fazer login
       final response = await http.post(
         Uri.parse(url),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": funcionarioModel.email,
           "password": password,
-          "returnSecureToken": false, // 🔥 Isso impede o login automático
+          "returnSecureToken": false,
         }),
       );
 
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        // 🔹 4. Usuário criado com sucesso, pega o UID
         String userId = responseData["localId"];
+
+        // Atualiza o id do funcionário
         funcionarioModel.id = userId;
 
-        // 🔹 5. Salva os dados do funcionário no Firestore
+        // Atualiza o id do usersAccess se existir
+        if (funcionarioModel.usersAccess != null) {
+          funcionarioModel.usersAccess!.id = userId;
+        }
+
         await _firestore
             .collection('funcionarios')
             .doc(userId)
@@ -326,6 +327,56 @@ class FuncionarioServices extends ChangeNotifier {
       return false;
     }
   }
+
+  // Future<bool> signUp2({
+  //   required FuncionarioModel funcionarioModel,
+  //   required String password,
+  //   required Function onSuccess,
+  //   required Function onFail,
+  // }) async {
+  //   try {
+  //     // 🔹 1. Sua chave da API do Firebase
+  //     const String apiKey = "AIzaSyAvL70V85C4ripLXm7xCWpxH7xkXkq_eno";
+
+  //     // 🔹 2. Endpoint para criar usuário via API REST
+  //     const String url =
+  //         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$apiKey";
+
+  //     // 🔹 3. Requisição para criar usuário sem fazer login
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode({
+  //         "email": funcionarioModel.email,
+  //         "password": password,
+  //         "returnSecureToken": false, // 🔥 Isso impede o login automático
+  //       }),
+  //     );
+
+  //     final responseData = jsonDecode(response.body);
+
+  //     if (response.statusCode == 200) {
+  //       // 🔹 4. Usuário criado com sucesso, pega o UID
+  //       String userId = responseData["localId"];
+  //       funcionarioModel.id = userId;
+
+  //       // 🔹 5. Salva os dados do funcionário no Firestore
+  //       await _firestore
+  //           .collection('funcionarios')
+  //           .doc(userId)
+  //           .set(funcionarioModel.toMap());
+
+  //       onSuccess();
+  //       return true;
+  //     } else {
+  //       onFail(responseData["error"]["message"]);
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     onFail("Erro inesperado ao criar conta: $e");
+  //     return false;
+  //   }
+  // }
 
   // Future<bool> signUp2({
   //   required FuncionarioModel funcionarioModel,

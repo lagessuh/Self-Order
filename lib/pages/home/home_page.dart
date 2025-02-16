@@ -2059,6 +2059,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: CustomScrollView(
         slivers: [
           // App Bar com título e busca
@@ -2081,8 +2082,8 @@ class _HomePageState extends State<HomePage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color.fromARGB(255, 0, 0, 0),
-                      Color.fromARGB(255, 218, 66, 66),
+                      Color.fromARGB(255, 17, 0, 0),
+                      Color.fromARGB(255, 53, 53, 53),
                     ],
                   ),
                 ),
@@ -2126,7 +2127,7 @@ class _HomePageState extends State<HomePage> {
           // Banner Carousel
           SliverToBoxAdapter(
             child: Container(
-              height: 200,
+              height: 100,
               margin: const EdgeInsets.symmetric(vertical: 16),
               child: CarouselView(
                 itemExtent: MediaQuery.of(context).size.width,
@@ -2136,8 +2137,8 @@ class _HomePageState extends State<HomePage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
-                      "assets/banners/hamburgueria.jpg",
-                      fit: BoxFit.cover,
+                      "assets/banners/Titulo-Cardapio.png",
+                      fit: BoxFit.scaleDown,
                     ),
                   ),
                 ],

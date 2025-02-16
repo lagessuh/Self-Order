@@ -93,6 +93,15 @@ class UsersAccess {
     };
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'isActive': isActive,
+      'tipoUsuario': tipoUsuario,
+      'lastAccessTime':
+          lastAccessTime?.toIso8601String(), // Converter DateTime para String
+    };
+  }
+
   factory UsersAccess.fromMap(Map<String, dynamic> map) {
     return UsersAccess(
       id: map['id'],
@@ -107,7 +116,7 @@ class UsersAccess {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  //String toJson() => json.encode(toMap());
 
   factory UsersAccess.fromJson(String source) =>
       UsersAccess.fromMap(json.decode(source));

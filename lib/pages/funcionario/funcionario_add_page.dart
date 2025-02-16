@@ -517,35 +517,38 @@ class _FuncionarioAddPageState extends State<FuncionarioAddPage> {
 
   final Map<String, List<String>> rolePermissions = {
     'admin': [
-      'manage_users',
+      //'manage_users',
       'manage_funcionarios',
-      'view_reports',
+      //'view_reports',
       'manage_orders',
       'manage_menu',
-      'manage_settings'
-    ],
-    'gerente': [
-      'view_reports',
-      'manage_orders',
-      'manage_menu',
-      'view_funcionarios'
+      'view_all_order_history'
+      //'manage_settings'
     ],
     'funcionario': ['manage_orders', 'view_menu'],
-    'user': ['place_order', 'view_menu', 'view_order_history'],
-    'guest': ['view_menu']
+    'gerente': [
+      //'view_reports',
+      'manage_orders',
+      'manage_menu',
+      'view_all_order_history'
+      //'view_funcionarios'
+    ],
+
+    //'user': ['place_order', 'view_menu', 'view_order_history'],
+    //'guest': ['view_menu']
   };
 
   final Map<String, String> permissionLabels = {
-    'manage_users': 'Gerenciar Usuários',
+    //'manage_users': 'Gerenciar Usuários',
     'manage_funcionarios': 'Gerenciar Funcionários',
-    'view_reports': 'Visualizar Relatórios',
+    //'view_reports': 'Visualizar Relatórios',
     'manage_orders': 'Gerenciar Pedidos',
     'manage_menu': 'Gerenciar Cardápio',
-    'manage_settings': 'Gerenciar Configurações',
-    'view_funcionarios': 'Visualizar Funcionários',
+    //'manage_settings': 'Gerenciar Configurações',
+    //'view_funcionarios': 'Visualizar Funcionários',
     'view_menu': 'Visualizar Cardápio',
-    'place_order': 'Fazer Pedidos',
-    'view_order_history': 'Visualizar Histórico de Pedidos',
+    //'place_order': 'Fazer Pedidos',
+    'view_all_order_history': 'Visualizar Histórico de Pedidos',
   };
 
   @override
