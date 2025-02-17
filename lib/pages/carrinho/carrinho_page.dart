@@ -22,12 +22,17 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         elevation: 0.5,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Carrinho"),
+            Text(
+              "Carrinho",
+              style: TextStyle(color: Colors.white),
+            ),
             // ClipOval(
             //   child: Image.network(
             //     usersServices.userModel!.image!,

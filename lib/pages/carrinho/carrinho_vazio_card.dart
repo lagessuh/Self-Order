@@ -18,7 +18,7 @@ class CarrinhoVazioCard extends StatelessWidget {
           Icon(
             iconData,
             size: 80.0,
-            color: Colors.black,
+            color: Colors.white,
           ),
           const SizedBox(
             height: 16.0,
@@ -28,7 +28,7 @@ class CarrinhoVazioCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),

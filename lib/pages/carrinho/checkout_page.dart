@@ -170,10 +170,11 @@ class CheckoutPage extends StatelessWidget {
         );
       }
       return Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           title: const Text('Checkout'),
           centerTitle: true,
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.red,
         ),
         body: Padding(
           padding: const EdgeInsets.all(30.0),
@@ -194,6 +195,7 @@ class CheckoutPage extends StatelessWidget {
                         bool pedidoConfirmado =
                             await carrinhoServices.cartCheckout(user!);
                         if (pedidoConfirmado) {
+                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Pedido confirmado com sucesso!'),
@@ -201,6 +203,7 @@ class CheckoutPage extends StatelessWidget {
                             ),
                           );
                         } else {
+                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Erro ao confirmar pedido!'),

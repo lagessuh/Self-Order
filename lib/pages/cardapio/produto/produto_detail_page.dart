@@ -38,12 +38,14 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       key: scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
         title: Text(
           "Detalhes do Produto",
           style: TextStyle(
-            color: const Color.fromARGB(255, 1, 17, 1),
+            color: const Color.fromARGB(255, 255, 255, 255),
             fontSize: Responsive.isDesktop(context)
                 ? 22
                 : Responsive.isTablet(context)
@@ -102,6 +104,7 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
               return Padding(
                 padding: constraints.maxWidth > 700
                     ? EdgeInsets.only(
+                        bottom: 30,
                         top: 30.0,
                         left: MediaQuery.of(context).size.width * .1,
                         right: MediaQuery.of(context).size.width * .1)
@@ -114,7 +117,7 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         width: 1,
-                        color: Colors.black12, //
+                        color: Colors.white, //
                       )),
                   child: ListView(
                     shrinkWrap: true,
@@ -145,7 +148,7 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
                         widget.produto.nome!,
                         textAlign: TextAlign.start,
                         style: GoogleFonts.lexendDeca(
-                          color: const Color(0xFF151B1E),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                           fontSize: constraints.maxWidth > 700 ? 22 : 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -154,7 +157,7 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
                         'R\$ ${widget.produto.preco.toString()}',
                         textAlign: TextAlign.start,
                         style: GoogleFonts.lexendDeca(
-                          color: const Color(0xFF151B1E),
+                          color: const Color.fromARGB(255, 253, 253, 253),
                           fontSize: constraints.maxWidth > 700 ? 22 : 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -169,7 +172,7 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
                             'Informações do Produto:',
                             textAlign: TextAlign.start,
                             style: GoogleFonts.lexendDeca(
-                              color: const Color(0xFF151B1E),
+                              color: const Color.fromARGB(255, 255, 255, 255),
                               fontSize: constraints.maxWidth > 700 ? 20 : 16,
                               fontWeight: FontWeight.w300,
                             ),
@@ -177,13 +180,13 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
                           Text(
                             widget.produto.descricao!,
                             style: GoogleFonts.lexendDeca(
-                              color: const Color(0xFF151B1E),
+                              color: const Color.fromARGB(255, 255, 255, 255),
                               fontSize: constraints.maxWidth > 700 ? 20 : 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(
-                            height: 60,
+                            height: 30,
                           ),
                           // Row(
                           //   mainAxisSize: MainAxisSize.min,
@@ -221,23 +224,28 @@ class _ProdutoDetailPageState extends State<ProdutoDetailPage> {
                           //   ],
                           // ),
                           Container(
-                            decoration:
-                                BoxDecoration(border: Border.all(width: 1)),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 1),
+                                color: Colors.white),
                             child: DropdownButton(
                               // Initial Value
                               value: quantity,
 
                               // Down Arrow Icon
-                              icon: const Icon(Icons.keyboard_arrow_down),
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.black,
+                              ),
 
                               // Array list of items
                               items: items.map((String items) {
                                 return DropdownMenuItem(
                                   value: items,
                                   child: Container(
+                                    //color: Colors.white,
                                     margin: const EdgeInsets.symmetric(
                                         horizontal: 10),
-                                    width: 250,
+                                    width: 100,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [

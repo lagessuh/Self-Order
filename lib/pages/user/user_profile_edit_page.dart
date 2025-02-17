@@ -397,6 +397,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:self_order/commons/responsive.dart';
 //import 'package:provider/provider.dart';
 //import 'package:self_order/models/users/cliente.dart';
 //import 'package:self_order/models/users/funcionario.dart';
@@ -527,63 +528,83 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
     }
   }
 
+  EdgeInsets _getResponsivePadding(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return const EdgeInsets.all(80);
+    } else if (Responsive.isTablet(context)) {
+      return const EdgeInsets.all(70);
+    }
+    return const EdgeInsets.all(40);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Editar Perfil'),
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
+        title: const Text(
+          'Editar Perfil',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 30),
-              const Text(
-                "Editando Perfil de Usuário",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color.fromARGB(255, 2, 32, 3),
-                  fontSize: 28,
-                  fontFamily: 'Lustria',
-                  fontWeight: FontWeight.w700,
-                ),
+      body: Center(
+        child: Card(
+          margin: const EdgeInsets.all(16),
+          child: Padding(
+            //padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  const SizedBox(height: 30),
+                  const Text(
+                    "Editando Perfil de Usuário",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 2, 32, 3),
+                      fontSize: 28,
+                      fontFamily: 'Lustria',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  if (userData != null) ...[
+                    Text(
+                      'Email: ${userEmail ?? "Não definido"}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      'Tipo: ${isFuncionario ? "Funcionário" : "Cliente"}',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 15),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: _buildInputDecoration('Nome do Usuário'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, insira um nome';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: _saveProfile,
+                      child: const Text('Salvar Alterações'),
+                    ),
+                  ] else
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
               ),
-              const SizedBox(height: 30),
-              if (userData != null) ...[
-                Text(
-                  'Email: ${userEmail ?? "Não definido"}',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  'Tipo: ${isFuncionario ? "Funcionário" : "Cliente"}',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: _buildInputDecoration('Nome do Usuário'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira um nome';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: _saveProfile,
-                  child: const Text('Salvar Alterações'),
-                ),
-              ] else
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-            ],
+            ),
           ),
         ),
       ),

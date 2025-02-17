@@ -663,6 +663,7 @@ class ListaPedidosPage extends StatelessWidget {
   Widget build(BuildContext context) {
     CarrinhoServices carrinhoServices = CarrinhoServices();
     return Scaffold(
+      backgroundColor: Colors.black,
       body: StreamBuilder(
           stream: carrinhoServices.loadClientePedidos(),
           builder: (context, snapshot) {
@@ -678,56 +679,77 @@ class ListaPedidosPage extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(
                         left: 10, right: 10, top: 10, bottom: 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Id do Carrinho: ${ds.id}'),
-                        Text('Data do Pedido: ${ds['data']}'),
-                        Text('Status: ${ds['status']}'),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            physics: const ScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image.network(
-                                      width: 55,
-                                      height: 55,
-                                      items[index]['produto']['image'],
-                                    ),
-                                    const SizedBox(
-                                      width: 25,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(items[index]['produto']['marca']),
-                                        Text(items[index]['produto']['nome']),
-                                        SizedBox(
-                                          width: 300,
-                                          child: Text(
-                                            items[index]['produto']
-                                                ['descricao'],
-                                            maxLines: 1,
-                                            softWrap: false,
-                                            overflow: TextOverflow.ellipsis,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Id do Carrinho: ${ds.id}',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            'Data do Pedido: ${ds['data']}',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            'Status: ${ds['status']}',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: items.length,
+                              physics: const ScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Image.network(
+                                        width: 55,
+                                        height: 55,
+                                        items[index]['produto']['image'],
+                                      ),
+                                      const SizedBox(
+                                        width: 25,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            items[index]['produto']['marca'],
+                                            style:
+                                                TextStyle(color: Colors.white),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                        const Divider(
-                          color: Color.fromARGB(255, 1, 26, 2),
-                        )
-                      ],
+                                          Text(
+                                            items[index]['produto']['nome'],
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          SizedBox(
+                                            width: 300,
+                                            child: Text(
+                                              items[index]['produto']
+                                                  ['descricao'],
+                                              maxLines: 1,
+                                              softWrap: false,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                          const Divider(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },

@@ -150,6 +150,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Consumer<UsersAccessServices>(
@@ -208,7 +209,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 const Text(
                   "Perfil de Usuário",
                   style: TextStyle(
-                    color: Color.fromARGB(255, 2, 32, 3),
+                    color: Color.fromARGB(255, 255, 255, 255),
                     fontSize: 28,
                     fontFamily: 'Lustria',
                     fontWeight: FontWeight.w700,

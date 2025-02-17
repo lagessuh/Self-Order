@@ -172,7 +172,9 @@ class _ListaPedidosManagerPageState extends State<ListaPedidosManagerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
         title: const Text('Listagem de Pedidos'),
       ),
       body: Column(
@@ -180,28 +182,31 @@ class _ListaPedidosManagerPageState extends State<ListaPedidosManagerPage> {
           // Dropdown para selecionar o status do pedido
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: DropdownButton<String>(
-              value: _statusSelecionado,
-              hint: const Text('Filtrar por status'),
-              isExpanded: true,
-              items: [
-                'Todos',
-                'Pendente',
-                'Em Preparo',
-                'Pronto',
-                'Entregue',
-                'Cancelado'
-              ].map((status) {
-                return DropdownMenuItem(
-                  value: status,
-                  child: Text(status),
-                );
-              }).toList(),
-              onChanged: (novoStatus) {
-                setState(() {
-                  _statusSelecionado = novoStatus;
-                });
-              },
+            child: Container(
+              color: Colors.white,
+              child: DropdownButton<String>(
+                value: _statusSelecionado,
+                hint: const Text('Filtrar por status'),
+                isExpanded: true,
+                items: [
+                  'Todos',
+                  'Pendente',
+                  'Em Preparo',
+                  'Pronto',
+                  'Entregue',
+                  'Cancelado'
+                ].map((status) {
+                  return DropdownMenuItem(
+                    value: status,
+                    child: Text(status),
+                  );
+                }).toList(),
+                onChanged: (novoStatus) {
+                  setState(() {
+                    _statusSelecionado = novoStatus;
+                  });
+                },
+              ),
             ),
           ),
 
